@@ -1,0 +1,32 @@
+
+Run this program by typing                              
+
+	eden perturbhkl pname fcname perturb_frac [seed]
+
+where pname stands for an input file name without .inp extension, fcname is 
+the name of a model fcalc structure factor file, perturb_frac is the fraction 
+of each amplitude that is to be used for perturbation and [seed] is an optional
+positive integer in range (1, 99) that defaults to 1.  File fcname should be 
+typed in full.  Output will be written to pert[ss].fcalc, where ss is a 2-digit 
+representation of the seed.
+
+Perturbhkl generates a perturbed version on the input fcalc file, using a 
+random Gaussian perturbation which, for non-centric reflections, is applied to 
+both real and imaginary parts of the input structure factor.  For centric 
+reflections, the perturbation is applied to the non-zero component of the 
+complex structure factor.
+	
+Note that the output file contains only the unique reflections.
+
+Perturbhkl expects the input parameter file to contain parameters entered as 
+upper- or lower-case keywords followed by values.  The basic input set is:
+
+	RESOLUTION	res   		# resolution in Angstrom
+	SYMMETRY 	name		# symmetry group 
+	CELL		a b c alpha beta gamma	
+					# unit cell dimensions in Angstrom 
+					# and angles in degrees 
+and optionally,
+
+	RECORD          /a/b/.../name	# full path to record-keeping filename 
+

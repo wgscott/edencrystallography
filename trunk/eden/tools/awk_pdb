@@ -1,0 +1,27 @@
+#
+#	AWK script to convert pdb files whose fields coalesce (lack 
+#	white space separators) into a form that EDEN can read. 
+#
+#	Run it by typing:
+#		awk -f awk_pdb < [infile] > [outfile]
+#
+#	where [infile] and [outfile] stand for input & output pdb file names.
+#
+#	I DO NOT VOUCH FOR ITS CORRECTNESS IN ALL CASES!!!
+#
+#	Note: the header gets botched, but Eden doesn't use it.
+#	Note c which skip some columns, so that " CA" (for alpha carbon)
+#	and "Ca " (for calcium) may be distinguished.
+#
+{line=$0;
+a=substr(line, 1,6); 
+b=substr(line, 7,5); 
+c=substr(line,13,2); 
+d=substr(line,18,3);
+e=substr(line,23,4);
+f=substr(line,31,8);
+g=substr(line,39,8);
+h=substr(line,47,8);
+i=substr(line,55,6);
+j=substr(line,61,6);
+if ((a == "ATOM  ") || (a == "HETATM")) print a, b, c, d, e, f, g, h, i, j} 

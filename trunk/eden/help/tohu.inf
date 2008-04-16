@@ -1,0 +1,28 @@
+
+********************************************************
+
+Run this program by typing                            
+
+	eden  tohu  pname  pdbname
+
+where pname stands for an input parameter file name 
+      without extension '.inp' and
+      pdbname stands for the input pdb file name
+      without extension '.pdb',
+
+or by typing
+
+	eden tohu pname
+
+in which case, you will be prompted to enter remaining
+argument.
+
+Structure factors are written to a file named 
+pdbname.fcalc.
+
+For more information, type 
+
+	eden -h tohu 
+
+********************************************************
+

@@ -1,0 +1,45 @@
+#!/bin/csh -f 
+#PBS -l arch=pentium-linux		
+setenv EDENHOME	/home/hanna/EDEN		
+
+## The previous 2 lines define
+## the system under which EDEN runs and your definition of EDENHOME
+
+##	This is a script to test the stability of an Eden Solve run that
+##	resulted in a file "result.fc". 
+## 
+##	We perturb result.fc using a perturbation fraction f 
+##	and a seed s1 (both read from whatever calls this script)
+##
+##	We run Back on the perturbed hkl: and we run Solve on the result
+##	of the Back run.  We collect the results in  a dedicated directory.
+##
+##	Note that it is assumed that there are Eden files named:
+##	pert.inp, back.inp and solve.inp (as well as result.fc) in the pwd.
+
+set f = $1			## perturbation fraction
+set s = $2			## seed
+set eden = /home/hanna/bin/eden	## location of the executable, Eden
+set this = /home/hanna/thisrun	## where to put results
+
+$eden perturbhkl pert result.fc $f $s
+mv pert$s.fcalc pert.fcalc
+$eden -v back back 
+$eden -v solve solve
+
+## collect info into appropriate directory, labelled by 
+## perturbation fraction and seed.
+
+mkdir $this/run$1.$2
+
+mv *log          $this
+mv *cost         $this
+mv back_back.bin $this
+mv solve.bin     $this
+mv outlier0      $this
+
+## Clean up.  The named files are unlikely to be useful.
+
+rm -f pert.fcalc
+rm -f solve.newhkl
+rm -f back_back.newhkl

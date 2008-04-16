@@ -1,0 +1,14 @@
+#
+# Original is in X-PLOR format and contains the correct value of F(000)
+#
+cp ../originals/start.fc k2.hkl
+#
+# Apodize it
+#
+eden apodfc apo k2.hkl
+#
+mv k2_apo.hkl start.fcalc
+#
+# Clean up
+#
+rm k*.hkl 

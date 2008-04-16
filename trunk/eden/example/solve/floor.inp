@@ -1,0 +1,7 @@
+CELL		40.802 18.519 22.379 90 90.57 90 
+SYMMETRY	P21
+INPUT_RES	0.93
+FSCALE		0.8	# as determined in apodfo
+FO_FILENAME	../apodize/cramb.fobs       
+MD_FILENAME	../back/par_back
+MODE	correction

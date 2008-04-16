@@ -1,0 +1,33 @@
+Here is a description of our solvent target procedure, which may explain
+why part of an incomplete model may not be recovered by Eden, particularly
+if the missing part protudes a lot from the known part.
+
+We take the starting hkl model.  We smear it strongly and then find its 
+real-space non-negative counterpart.  In real space, each molecule will appear 
+to be one large blob.  We then threshold the real-space smeared model so that 
+the lower fraction of the electron density is identified as "solvent".  The 
+fraction so identified must be supplied by you, the user.
+
+Then, when we run the solver, we "encourage" it to put ~0.34 el/cubA in this 
+solvent region, while at the same time it tries to satisfy the usual matching
+of |Fcalc| to Fobs.  Thus if the identified "solvent" actually encroaches on
+the missing part of the molecule that we're trying to recover, these two goals
+are contradictory!  How can we get out of this dilemma?  There are two ways.
+
+(1) We can lower the target fraction when preparing the target, and/or lower 
+the weight (degree to which we encourage compliance with the target) in Solve.  
+This is the method we use when we have no better information.  Or 
+
+(2) We can get a more complete starting hkl model to use for smearing and
+preparing the solvent target, if such a model exists.  
+
+Generally, we do an initial Solve run with NO solvent target, then prepare a 
+target from that run's outcome.  I.e., we do following:
+
+1,	Solve, no solvent target;
+2. 	Forth, to prepare .hkl file from step1's .bin file
+3.	Apodfc, w. large APOD_RES input, applied to step 2's output.
+4.	Back, to get .bin file from step 3.
+5.	Maketar, applied to step 4's output.
+6.	Solve, with the solvent target from step 5.
+

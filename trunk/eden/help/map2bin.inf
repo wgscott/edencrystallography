@@ -1,0 +1,26 @@
+
+******************************************************
+
+Run this program by typing
+
+	eden  map2bin  pname  name
+
+where pname stands for an input parameter file name
+			without extension '.inp',
+
+or by typing
+
+	eden map2bin pname
+
+in which case, you will be prompted to enter remaining
+argument.
+
+Input will be taken from the map files name.map.  A 
+single binary output file named name.bin will be written.
+
+For more information, type 
+
+	eden -h map2bin 
+
+******************************************************
+

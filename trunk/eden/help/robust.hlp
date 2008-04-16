@@ -1,0 +1,19 @@
+Solve applies a cost function in reciprocal space that measures the 
+degree to which the current solution, Fcalc, approaches the actual 
+measurement, Fobs.  Normally, this function has a parabolic form:
+
+	cost = Sum_over_hkl [(fcalc - fobs)^2]
+
+However, if there are outliers - values of fcalc that deviate strongly
+from the corresponding fobs -- this measure can give unreasonably 
+large contributions to the full cost function.  In that case, you may 
+want to use a "robust" cost function, defined as:
+
+	cost = Sum_over_hkl 
+                           [(fcalc - fobs)^2]     where |fcalc-fobs| < sigma
+and
+                           [|fcalc - fobs|}       elsewhere.
+
+This function is linear rather than parabolic for deviations that exceed 
+sigma.  You may also use an (input) multiplier, rob_factor, to fine-tune 
+the effects of this function.

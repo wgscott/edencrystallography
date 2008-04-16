@@ -1,0 +1,47 @@
+
+Run Maketar by typing ;
+
+	eden  maketar  pname  sname
+
+where pname is a parameter file name WITHOUT extension .inp and the model will 
+be taken from sname.bin.
+
+Maketar determines the level at which to apply weights using either of 2 input 
+variables - MASK_FRACTION or THRESHOLD (see below).  It then sets the weights 
+of all points either >= or < this level, again based on the input TARGET (see 
+below).
+
+The model for a stabilizing target may be prepared by running Back on the known 
+fcalc.  A model for a solvent target may be prepared using XPLOR followed by 
+Back, using the X-PLOR output; in both these cases, the value of TARGET should 
+be "high".  A solvent target may also be prepared by apodizing a fairly 
+complete model, running Back, and then using a "low" target.
+
+Output is written to binary files named "weight" and "target" with .bin 
+extensions.  The "target" files may not be useful, e.g. in the case of a 
+stabilizing target, for which sname itself is the appropriate target.
+
+Maketar expects to find an input file, pname.inp, containing parameters entered 
+as upper- or lower-case keywords followed by values.  
+
+The obligatory input is:
+
+	RESOLUTION	res   		# resolution in Angstrom
+	SYMMETRY 	name		# symmetry group 
+	CELL		a b c alpha beta gamma	
+					# unit cell dimensions in Angstrom 
+					# and angles in degrees 
+	TARGET		string		# "high" or "low"
+
+The optional input is:
+
+	GRID_TYPE  	string 		# "simple" or "body-centered"
+	MASK_FRACTION	value		# fraction of points for applying 
+					# weight. Default 0.5 (i.e. 50%)
+	THRESHOLD	value		# value (el/cub A) at which weighting
+					# kicks in.  No default.
+	TARGET_VALUE	value		# the value (el/cub A) used to fill
+					# the "target" arrays.  Default: 0.34
+	RECORD          /a/b/.../name	# full path to record-keeping filename 
+
+Note that TARGET_VALUE is meaningless for a stabilizing (non-solvent) target;

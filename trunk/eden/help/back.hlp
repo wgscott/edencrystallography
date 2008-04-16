@@ -1,0 +1,61 @@
+
+Back estimates electron densities from a set of calculated diffraction patterns 
+with phases. It obtains a "solution map" - i.e., the amplitudes of a set of 
+Gaussian densities of width eta*(grid_spacing)^2 centered on a simple grid or 
+on a body-centered grid, where:
+grid_spacing = 0.6 * input_res for a simple grid, 
+	       0.7 * input_res for a body-centered grid.  
+and eta, the Gaussian width, defaults to 0.8 for a simple grid or 0.6 for a
+body-centered grid.  Eta is expected to be in range (0.5 - 0.9).
+The code takes the diffraction pattern to appropriate resolution and grids at 
+resolution grid_spacing.  It imposes a Gaussian window ("smear") on the input 
+by multiplying the Fhkl by 
+
+	exp[-delta*eta*pi^2*(dr)^2*|h|^2].
+
+One purpose of this calculation is to provide Eden with a "known" map, whose 
+values may serve to set initial bounds on the solver.  
+
+Run Back by typing
+
+	eden [-v] back pname [fc_filename]
+   
+where pname is a parameter file name without extension .inp, containing run 
+conditions and atomic parameters, entered as upper- or lower-case keywords 
+followed by values.
+
+Optional -v (verbose) flag produces a cost function listing in pname.cost; 
+default (no -v flag) produces no pname.cost.
+
+		>>> NEW EXECUTE LINE OPTION 2/25/02 <<<
+
+optional fc_filename is name of hkl (fcalc) file; it overrides any value for
+FC_FILENAME in the input file.
+
+The obligatory input is:
+
+	RESOLUTION	res   		# resolution in Angstrom
+	SYMMETRY 	name 		# symmetry group - e.g. P41
+	CELL		a b c alpha beta gamma	
+					# unit cell dimensions in Angstrom and 
+					# angles in degrees 
+
+Optional input is:
+
+	FC_FILENAME 	name 		# name of hkl (fcalc) file for model 
+					# (req'd if that name is not on the 
+					# execute line)
+	GRID_TYPE  	string 		# 'simple' or 'body-centered'
+	DFDX_CRIT	value 		# < 1., default 0.001, factor by which 
+					# gradient may fall before solver 
+					# returns.
+	MIN_DENS	value		# min. density (el/cubA) for solver;
+					# default - 0.
+	MAX_DENS	value		# max. density (el/cubA) for solver;
+					# default - 1000.
+	RECORD          /a/b/.../name	# full path to record-keeping filename 
+
+Back writes out a binary file, [name]_back.bin for the resulting real-space 
+electron/voxel data.  It no longer writes a corresponding structure factor file.
+If you need such a file, you must run Forth on [name]_back.bin.
+

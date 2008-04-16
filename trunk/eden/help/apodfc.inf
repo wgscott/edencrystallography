@@ -1,0 +1,30 @@
+
+******************************************************
+
+Run this program by typing
+
+	eden  [-vg] apodfc  pname  sfname
+
+where pname stands for a parameter file name 
+		(no extension)
+      sfname stands for structure factor (fcalc) 
+		file name.
+
+or by typing
+
+	eden apodfc pname
+
+in which case, you will be prompted to enter remaining
+argument.
+
+  optional -v means print log(Isq) values to the log.
+        no -v means no detailed output.   
+  optional -g means enable graphics plot.
+        no -g means no graphics.
+
+For more information, type 
+
+	eden -h apodfc 
+
+******************************************************
+

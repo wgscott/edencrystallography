@@ -1,0 +1,28 @@
+
+******************************************************
+
+Run this program by typing
+
+	eden  maketar  pname  name
+
+where pname stands for a parameter file name
+			without extension '.inp'
+
+or by typing
+
+	eden maketar pname
+
+in which case, you will be prompted to enter remaining
+argument.
+
+The smeared model will be taken from name.bin.
+
+Output is written to binary files named weight and target
+with .bin extensions.
+
+For more information, type 
+
+	eden -h maketar 
+
+******************************************************
+

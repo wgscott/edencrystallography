@@ -1,0 +1,15 @@
+#
+#	AWK script to convert an XPLOR-style fcalc file from EDEN's Solve 
+#	to .phs form, suitable for using in XtalView. 
+#
+#	Script skips the (0,0,0) term which causes XtalView to choke
+#	and it skips entries with amplitude = 0.
+#
+#	Run it by typing:
+#		awk -f awk_xplor_to_xtal < [infile] > [outfile]
+#
+#	where [infile] and [outfile] stand for input & output file names.
+#
+{if ((!(($2 == 0) && ($3 == 0) && ($4 == 0)))  \
+     && ($6 > 0)) \
+print $2,"\t", $3,"\t", $4,"\t", $6,"\t", $6,"\t", $7}

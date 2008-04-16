@@ -1,0 +1,86 @@
+
+Here is an alphabetical list of the keywords that appear in Eden programs.  
+Wherever there is no entry for "default value", there is NO default.  
+
+Where appropriate, replace [d] by 1, 2, ... NDER 
+		       and [c] by 1, 2, ... NCONSTRAINTS.
+
+Wherever a keyword names a file, a legal value is "empty" signifying that 
+there is no such file and all entries should be set to 0; of course, this is 
+appropriate only in special cases for fcalc files or for Np space files.
+When the keyword is WT_FILENAME, a legal value is "full" signifying that there
+is no such file and all entries should be set to 1.
+
+keyword		description				which 		default
+							program(s)?	value(s)
+---------------	--------------------------------------	--------------	-------
+ANOM            is data from anomalous dispersion?      expandfc, fo    FALSE
+ANOM_DER[n]	is derivative anomalous?		solve		FALSE
+APOD_RES	resolution for calculating delta  	apodfc, fo     input_res
+AUTOSCALE	do automatic rescaling in MIR?		solve		TRUE
+BCORR		B- value correction			count
+BINWIDTH	bin width for Wilson-like plots.	apodfo, apodfc	0.002
+C1       	coefficient for 1st file		addmaps,cadhkl 	1.0
+C2       	coefficient for 2nd file 		addmaps,cadhkl 	1.0
+CELL		unit cell: a, b, c (A), 3 angles (deg) 	all		
+CON_TYPE[c]	constraint type: "target", "cs", etc. 	solve
+DATA_RES	res. for normalizing derivatives	shapes	       input_res
+DETWIN		crystal detwinning? 			solve		FALSE 
+DFDX_CRIT	factor controlling gradient drop	back, solve	3e-2
+DISCRP_FRAC	fraction of discrepancy limit for stop	solve		1.
+ETA		Gaussian exp. factor, range (0.5 - 0.9)	most		see (2)
+FC_FILENAME 	filename of model (fcalc) data		back
+FC_HEAVY_FN[d]	filename of dth heavy atom str. factors	solve(MIR,MAD)
+FORMAT		code name for output formatting 	regrid, shapes	XPLOR
+FO_DER_FN[d]	filename of dth obs. derivative		solve(MIR,MAD)
+FO_FILENAME 	filename of observed (fobs) data	solve	
+FP_FPP[d]	2 values for f' and f'' (MAD)		solve
+FSCALE   	scaling factor for fobs data		solve		
+FSCALE_DER[d]  	scaling factor for fo_der_fn[d] 	solve(MIR,MAD)	1.
+GRID_TYPE	"simple" or "body-centered" 		most		see (1)
+HIGHRES		special high-res processing?		solve, regrid   FALSE
+HRCUTOFF	value, * <vox> = highres cutoff		solve		10.
+INPUT_RES	old name for RESOLUTION (still valid)	all
+LEVELS		fractions of input_res defining radii 	count	  	1.0, 1.5 2.0
+MASK_FRACTION	fraction of points for applying mask 	maketar		0.5
+MAX_DENS	max. density (el/cubA) for CCG solver	solve, back	1000
+MAX_RES		maximum resolution in A			apodfc, apodfo	0.05
+MD_FILENAME 	model electron/voxel filename 		solve	
+MIN_DENS	min. density (el/cubA) for CCG solver	solve, back	0
+MIN_RES		minimum resolution in A	 		apodfc, apodfo	5.0
+MODE 		"completion" or "correction" 		solve		correction
+MODE 		"add", "subtract","merge" or "elim"	cadhkl		add
+NCONSTRAINTS	number of constraints                  	solve		0
+NDER 		number of derivative files 		solve(MIR,MAD)	0
+OVERLAP		value for cs consistency		sym		0
+PHASE_EXT_RES	resolution for phase extension		solve           
+RECORD  	full path to a record-keeping filename	all		history	
+RELWT_CON[c] 	relative weight	for Np space constraint solve		0.
+RELWT_DER[d]	relative weight	for MIR or MAD 		solve(MIR,MAD)	1.
+RELWT_NATIVE	relative weight for native (hkl) 	solve(MAD)	1.
+RESOLUTION	resolution in Angstrom 			all	
+RHO_CUTOFF	fractional values for shapes cutoff	shapes		0.1
+ROBUST		use alternative (hkl) cost function?	solve		FALSE
+ROB_FACTOR	fraction - how strongly to enforce it	solve	
+R_STOP   	fractional R_factor to terminate run	solve		0.
+SYMMETRY	symmetry group - e.g. P41		all
+T_TYPE  	A (amp.) or I (int.) twinned crystal	solve		
+T_MATRIX  	twinning matrix transformation		solve		
+T_FRAC  	twinning fraction (0 - 0.5)		solve		
+TARGET		high or low: what's targetted?		maketar
+TARGET_VALUE	value (el/cub A) for target arrays.  	maketar   	0.34
+TA_FILENAME[c] 	filename for Np/Nhkl target values	solve
+THRESHOLD	value (el/cub A) at which wts kick in   maketar
+TITLE		optional title 				solve,back	""
+USESIG		use fobs SIGMAs?               		*fo, solve	TRUE
+WT_FILENAME[c] 	filename for Np space target weights	solve
+X_LIMITS        x lower and upper fractional limits 	regrid, shapes	0 1
+Y_LIMITS        y lower and upper fractional limits 	regrid, shapes	0 1
+Z_LIMITS        z lower and upper fractional limits 	regrid, shapes	0 1
+Z[d]		at. no. of heavy atom for MAD 		solve
+
+(1) GRID_TYPE is normally selected automatically on the basis of the angles
+entered in the CELL input.
+
+(2) default ETA is 0.8 for simple grid, 0.6 for body-centered cubic grid.
+

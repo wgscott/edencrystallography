@@ -1,0 +1,43 @@
+
+Regrid inputs a solution from Solve or Back (# electrons/voxel) and produces an 
+electron density map at a resolution that is N times greater, where N is an 
+integer (by default, 2).  N is read from the execute line:
+		
+	eden  regrid pname sname N
+
+Regrid expects to find a parameter file (pname.inp) and a file sname.bin.  If a 
+body-centered grid was used for preparing sname, N must be an even integer.
+
+Regrid writes an ASCII file, sname_[N].map, in X-PLOR format (for Mapman)*.
+
+Regrid uses an input file containing run conditions and parameters, entered as 
+upper- or lower-case keywords followed by values.
+
+The obligatory input is:
+
+	CELL  	        a b c alpha beta gamma		
+					# unit cell dimensions, in Angstrom, 
+					# followed by angles in degrees 
+	RESOLUTION	res   		# resolution in Angstrom
+	SYMMETRY	name		# symmetry group - e.g. P41
+
+Optional input is:
+
+	X_LIMITS         X1 X2 		# fractional limits in x (defaults: 0,1)
+	Y_LIMITS         Y1 Y2 		# fractional limits in y (defaults: 0,1)
+	Z_LIMITS         Z1 Z2 		# fractional limits in z (defaults: 0,1)
+
+	GRID_TYPE       string		# 'simple' or 'body-centered'
+
+	HIGHRES		TRUE		# default: FALSE
+	RECORD          /a/b/.../name	# full path to record-keeping filename 
+					
+Note that X_LIMITS, Y_LIMITS and Z_LIMITS may extend over negative or positive 
+ranges, depending on the region of interest for viewing with your 
+crystallographic display program.
+
+Any line containing anything else as its first symbol will be ignored.
+Input may be ordered arbitrarily.  Numbers are in free format.
+
+-------------------------------------------------------------------------------
+

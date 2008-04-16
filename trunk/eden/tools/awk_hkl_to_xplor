@@ -1,0 +1,17 @@
+#
+#	AWK script to convert .hkl file in fixed (3I4,2F8.2) format to 
+#	an X-PLOR format that EDEN can read.  The script will work for
+#	input files in which fields lack white space separators.
+#
+#	Run it by typing:
+#		awk -f awk_hkl_to_xplor < [infile] > [outfile]
+#
+#	where [infile] and [outfile] stand for input & output file names.
+#
+{line=$0;
+a=substr(line,1,4); 
+b=substr(line,5,4); 
+c=substr(line,9,4); 
+d=substr(line,13,8);
+e=substr(line,21,8); 
+print "IND ", a, b, c, " FOBS ", d, " SIG ", e}

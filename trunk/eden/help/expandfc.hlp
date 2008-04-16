@@ -1,0 +1,34 @@
+
+Expandfc  does an expansion of an fcalc structure factor file from any 
+symmetry to P1.
+   
+Run Expandfc by typing:
+
+	eden  expandfc  pname  fcname.ext
+
+where pname stands for a parameter file without extension .inp.  Input will be 
+taken from a model file of structure factors, fcname.ext and output will be 
+written to another model file of structure factors, fcname_P1.ext.  If the 
+data is an anomalous dispersion file (see below) output is written to 
+fcname_Pplus.ext and (for triclinic crystals) to fcname_Pminus.ext.
+
+Expandfc expects the input file, pname.inp, to contain parameters entered as 
+upper- or lower-case keywords followed by values.
+
+The basic input set (not all of which is used) is:
+
+	RESOLUTION	res   		# resolution in Angstrom
+	SYMMETRY 	name		# symmetry group 
+	CELL		a b c alpha beta gamma	
+					# unit cell dimensions in Angstrom 
+					# and angles in degrees 
+
+optional input is
+
+	ANOM		TRUE		# TRUE or FALSE, for anomalous data
+	RECORD          /a/b/.../name	# full path to record-keeping filename 
+
+Any line containing anything else as its first symbol will be ignored.
+Input may be ordered arbitrarily.  Numbers are in free format.
+
+

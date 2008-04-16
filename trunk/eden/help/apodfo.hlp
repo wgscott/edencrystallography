@@ -1,0 +1,95 @@
+
+Apodfo is a preprocessor for Eden, to be used for apodizing (smearing) the
+data in an fobs file.  It also provides help for determining fscale, the 
+absolute scaling of fobs to fcalc files.
+
+Apodfo reads (hkl) structure factors from an input fobs file; it generates a 
+set of data points that are mean values of ln(|I|^2) over equal intervals, in 
+a space whose units are:  
+
+  1/dsq = 1/(r*r) = (h/a)*(h/a) + (k/b)*(k/b) + (l/c)*(l/c)
+
+(or their generalized form for triclinic crystals).  
+
+The program finds the slope of that set of data points, using appropriate 
+resolution limits (see below); it then calculates and writes out a set of 
+apodized structure factors, spreading the data by an exponential factor delta 
+derived from the slope, insofar as delta > 0.  
+
+Apodfo prints the average crystallographic B factor before and after 
+apodization.  It also writes out one further little file (whose name is derived 
+from the input fobs file by adding "_wil") showing the apodized version of your 
+data (ln(Isq) vs. 1/dsq), for inspection under xmgrace or other plotting program.
+
+If you want to see how Apodfo does its apodization, you should run it with the 
+-g flag for graphics.  Then, from within Apodfo, four plots are normally 
+displayed (under xmgrace) and you will be able to choose which pair to use for 
+determining the smearing factor.  The first two plots (labelled "wil" and 
+"lin_wil" show, respectively, the original ln(Isq) as a function of 1/dsq and 
+a best-fit linearized version of the same.  The second pair of plots (labelled 
+"wil_w0corr" and "lin_wil_w0corr") show the same after application of a 
+"universal" correction, specific to proteins.  Generally, if your crystal is
+a protein, we recommend using the corrected files.  The report (to terminal 
+and log) will help you make that decision by reporting the standard deviation 
+of linearized to unlinearized plots, for both original and corrected versions.  
+If you do not request graphics, Apodfo makes the decision for you, based on the 
+lower standard deviation.
+
+After apodization, Apodfo allows you to determine the scaling factor that 
+brings the Wilson plot into closest correspondence with a Wilson plot of some 
+model data.  If you choose to scale, you will be asked to provide the name of 
+that file (produced by running Apodfc).  Again, if graphics are enabled, you 
+will be shown the best fit plots of the fobs and fcalc.  Note that the scale 
+factor proposed is not automatically applied to the output fobs file; after 
+all, it may have to be scaled up to account for an incomplete model.
+The proposed "fscale" value (or whatever you consider to be the appropriate 
+scaling value) should be put into your Solve .inp file.  
+
+For reference, the pairs of points for the scaled fobs is written to a file 
+named "scaled_wil".
+
+Run the program by typing:
+	
+	eden [-vg] apodfo pname sfname
+
+where pname.inp is the input file, sfname is the fobs structure factor file 
+name (including extension).
+
+optional -v means send very detailed listings to the log (not recommended).
+optional -g means enable graphics plot.
+
+Apodfo expects to find an input file, pname.inp, containing run conditions and 
+parameters, entered as upper- or lower-case keywords (first column) followed 
+by values (second column), with optional comments (ignored by the code) 
+following the # sign.
+
+The obligatory input is:
+
+	SYMMETRY	name		# symmetry group - e.g. P41
+	CELL		a b c alpha beta gamma
+					# unit cell dimensions in Angstrom 
+					# and angles in degrees 
+	RESOLUTION	res   		# resolution in Angstrom
+
+The optional input is:
+
+	MAX_RES		maxval 		# maximum resolution (default: 
+					# 0.05 Angstrom)
+	MIN_RES		minval		# minimum resolution (default: 
+					# 3.5 Angstrom)
+	BINWIDTH	num		# width of each bin in units of 1/dsq. 
+					# into which intensities are gathered 
+					# (default: 0.002)
+	APOD_RES	val 		# resolution for calculating delta;
+					# (default: input_res). 
+	USESIG		TRUE/FALSE	# should fobs SIGMAs be read, apodized
+					# and written to output? default: TRUE.
+	RECORD          /a/b/.../name	# full path to record-keeping filename 
+
+The linear fit is calculated over a subset of the 1/dsq space, corresponding to 
+(max_res, min_res).  The apodized structure factors are written to a file whose 
+name is name_apo.ext, where name.ext stands for sfname.
+
+Output files are written to the directory in which Apodfo is run, regardless 
+of the directory in which sfname is located.
+

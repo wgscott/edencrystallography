@@ -1,0 +1,31 @@
+
+********************************************************
+
+Run this program by typing                              
+
+	eden perturbhkl pname fcname perturb_frac [seed]
+
+where pname stands for an input file name without .inp 
+extension, fcname is the name of a model fcalc structure 
+factor file, perturb_frac is the fraction of each 
+amplitude that is to be used for perturbation and 
+[seed] is an optional positive integer in range (1, 99)
+that defaults to 1,
+
+or by typing
+
+	eden perturbhkl pname
+
+in which case, you will be prompted to enter remaining
+arguments.
+
+File fcname should be typed in full.  Output will be 
+written to pert[ss].fcalc, where ss is a 2-digit 
+representation of the seed.
+
+For more information, type 
+
+	eden -h perturbhkl 
+
+********************************************************
+

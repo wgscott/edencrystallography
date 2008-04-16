@@ -1,0 +1,4 @@
+							Oct 18, 2004
+
+* Error corrected in readfobs() (hklread.c) to account for header info.
+

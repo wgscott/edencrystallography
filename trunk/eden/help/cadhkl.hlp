@@ -1,0 +1,43 @@
+
+Cadhkl Combines Assorted Data, in one of several ways.  What is done depends 
+on the input variable MODE:
+
+1. With no MODE or value 'add', Cadhkl adds comparable (hkl) structure factors 
+from two input fcalc files and places the sum in an output fcalc file.  You
+may include optional coefficients, C1 and C2, for the 2 input files.  In
+paricular, if C1 = 1 and C2 = -1, the input files are subtracted.
+
+2. With value 'merge', it merges phases from the first named input file with 
+amplitudes from the 2nd named input file (which is expected to be an fobs file) 
+and places the resulting structure factors in the output fcalc file.
+
+In both of the above cases, only entries that are in both input files 
+participate.
+
+3. With value 'eliminate', it writes amplitudes and sigmas from the 1st file 
+into the output file iff the (hkl) entry is NOT in the 2nd file. Both input 
+files are expected to be fobs files.
+
+4. With value 'copy' it takes amplitudes from the first named input file and
+phases from the second input file (both of which are expected to be fcalcs) and
+writes the result into the output file.  Insofar as entries are missing from 
+the 2nd input file, it copies both amplitudes and phases from 1st file to output.
+
+You must supply a parameter file name (no extension) and 3 other file names 
+(two input file names and an output file name).  All fcalc and fobs files 
+should be in XPLOR format.
+
+Cadhkl expects the input parameter file to contain parameters entered as 
+upper- or lower-case keywords followed by values.  The basic input set is:
+
+	RESOLUTION	res   		# resolution in Angstrom
+	SYMMETRY 	name		# symmetry group 
+	CELL		a b c alpha beta gamma	
+					# unit cell dimensions in Angstrom 
+					# and angles in degrees 
+	MODE		(see above)	# mode of operation
+	C1		value		# optional coef. for file #1 in add mode
+	C2		value		# optional coef. for file #2 in add mode
+	RECORD          /a/b/.../name	# optional path to record-keeping fn 
+
+By default, C1 = C2 = 1.

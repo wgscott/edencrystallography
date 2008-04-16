@@ -1,0 +1,25 @@
+
+bin2map reads a file containing electron/voxels in the binary format 
+(sname.bin) and writes a file in the Xplor format (sname.map).  The
+binary file must contain a "simple" grid.
+
+Run Bin2map by typing:
+
+	eden  bin2map  pname  sname
+
+where pname stands for a parameter file without extension .inp and sname
+stands for the binary file without extension.
+
+The obligatory input in pname.inp is the standard set of information:
+
+	RESOLUTION	res   		# resolution in Angstrom
+	SYMMETRY 	name		# symmetry group 
+	CELL		a b c alpha beta gamma	
+					# unit cell dimensions in Angstrom 
+					# and angles in degrees 
+
+There is no optional input, other than possibly a non-default grid type or
+non-default location of the record-keeping file:
+
+	GRID_TYPE  	string 		# 'simple' 
+	RECORD          /a/b/.../name	# full path to record-keeping filename 

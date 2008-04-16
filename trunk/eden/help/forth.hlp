@@ -1,0 +1,35 @@
+
+Forth applies a Fast Fourier Transform to the electron/voxel information, 
+converting it to structure factors.  Forth may thus be regarded as the inverse 
+of Back.  Output is written to fname_forth.hkl and will consist of an octant, 
+a quadrant or half of the (hkl) ellipsoid, depending on the symmetry group.
+
+Run Forth by typing 
+
+	eden  forth  pname fname
+
+where pname stands for problem file name WITHOUT extension .inp and fname 
+identifies the files to be transformed to Fourier space.
+
+Input data will be taken from binary files fname.bin. 
+
+Forth expects to find an input file containing basic run conditions and 
+parameters, entered as upper- or lower-case keywords followed by values.
+   
+The obligatory input is:
+
+	RESOLUTION	res   		# resolution in Angstrom
+	SYMMETRY 	name		# symmetry group 
+	CELL		a b c alpha beta gamma	
+					# unit cell dimensions in Angstrom 
+					# and angles in degrees 
+
+Optional input is:
+
+	GRID_TYPE  	string 		# 'simple' or 'body-centered'
+	RECORD          /a/b/.../name	# full path to record-keeping filename 
+
+Any line containing anything else as its first symbol will be ignored.
+Input may be ordered arbitrarily.  Numbers are in free format.
+
+

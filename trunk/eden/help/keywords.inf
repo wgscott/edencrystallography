@@ -1,0 +1,6 @@
+
+In order to get an alphabetical listing of all the keywords that appear 
+in Eden programs, type 
+
+	eden -h keywords.
+

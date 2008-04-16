@@ -1,0 +1,30 @@
+
+*************************************************
+
+Run this program by typing
+
+	eden  regrid  pname  sname  [N]
+
+where pname stands for a parameter file name
+			without extension '.inp',
+      sname stands for the base name of the binary
+			files to be regridded,
+  and N stands for the regrid factor (2 by default)
+  (Use an even N for body-centered grid.)
+
+or by typing
+
+	eden regrid pname
+
+in which case, you will be prompted to enter remaining
+arguments.
+
+Input data will be taken from sname.bin.  Output 
+will be written to sname_N.map (XPLOR file).
+
+For more information, type 
+
+	eden -h regrid 
+
+*************************************************
+

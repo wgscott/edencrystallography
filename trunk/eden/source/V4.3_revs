@@ -1,0 +1,10 @@
+
+*  Change in Apodfc/o to prevent rare problem in application 
+   of W0 correction, 1/14/04.
+
+*  Changed reading of Fobs files to check for bad format 
+   	 INDEX int int int FOBS float float SIGMA float
+   (The 2nd float after FOBS is illegal!)  4/2/04.
+
+*  Removed (redundant) solve.cost_for_plot. 4/14/04                              
+

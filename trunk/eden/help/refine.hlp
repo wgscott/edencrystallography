@@ -1,0 +1,28 @@
+Run Refine by typing
+
+	eden [-v] refine pname
+
+   
+Refine expects to find an input file containing run conditions and 
+parameters, entered as upper- or lower-case keywords followed by 
+values.  Anything written after a # sign is a comment.
+
+The obligatory input is:
+
+	CELL  	        a b c alpha beta gamma
+	PDB_FILENAME	name	# file containing the model to refine
+	XPLOR_FILENAME	name	# file containing the map against
+				# which to refine 
+	RESOLUTION	res   	# high resolution cutoff in Angstrom
+
+and the optional input is:
+
+	LOWRES		res	# low resolution cutoff in Angstrom
+				# default: 1000A.
+
+Refine expects that pname.inp is present and will refine the atom
+positions, B factors and occupancies in the pdb to fit the Xplor map 
+density, using the multidimensional minimizer of type BFGS (Broyden-
+Fletcher-Goldfarb-Shanno).  Use it only for well-solved structures.
+
+

@@ -1,0 +1,122 @@
+Run Solve by typing
+
+	eden [-v] solve pname
+
+   
+Solve expects to find an input file containing run conditions and parameters, 
+entered as upper- or lower-case keywords followed by values.
+Anything written after a # sign is a comment.
+
+The obligatory input is:
+
+	RESOLUTION	res   		# resolution in Angstrom
+	SYMMETRY 	name		# symmetry group - e.g., P41
+	CELL		a b c alpha beta gamma	
+					# unit cell dimensions in Angstrom 
+					# and angles in degrees 
+
+	FO_FILENAME 	name 		# name of observed data (fobs) file 
+	MD_FILENAME 	name 		# model electron/vox filename 
+	FSCALE   	value 		# scaling factor for placing fobs 
+					# data on an absolute scale
+
+Other obligatory input for MIR and/or MAD only is:
+
+	NDER 		nder   		# number of derivative files, max: 8.
+   and for [n] = 1, ... nder:
+	FO_DER_FN[n]	name 		# name of nth obs. hkl derivative file
+	FC_HEAVY_FN[n]	name 		# name of heavy atom str. factor file	
+
+(e.g.,	FO_DER_FN1	xglq1.fobs 
+      	FC_HEAVY_FN1	mymod1.fcalc	 etc.)
+
+Other obligatory input for MAD only is:
+
+	Z[n]		value		# at. no. of heavy atom
+	FP_FPP[n]	f'   f''	# the two values for f' and f''
+
+Optional input is:
+
+	MODE 		string 		# or 'correction' (def.) or 'completion'
+	GRID_TYPE  	string 		# 'simple' or 'body-centered'
+	USESIG		TRUE/FALSE	# should fobs sigma's be used for
+					# weighting? default: TRUE.
+	TITLE		string		# (for the log)
+	NCONSTRAINTS	con		# no. of constraints, def't: 0,max: 12
+   and for [c] = 1, ... con:
+	CON_TYPE[c]	string		# constraint type: "target" (or 
+					# "solvent_tar" or "stabilize_tar"), 
+					# "phase_ext", "cs","singlet" or 
+				 	# "triplet".
+	RELWT_CON[c] 	value 		# constraint relative weight; def't 0 
+	TA_FILENAME[c] 	name 		# filename for Np space target values
+					# or for singlet or triplet info.
+	WT_FILENAME[c] 	name 		# filename for Np space target weights
+
+	R_STOP   	value 		# R_factor to stop; default 0,
+	DISCRP_FRAC	value		# frac of discrepancy limit to stop;
+					# default 1.
+	DFDX_CRIT	value 		# < 1., def't 0.03, fraction to which
+					# gradient may fall in one iteration
+					# before solver returns.
+	MIN_DENS	value		# min. density (el/cubA) for solver;
+					# default 0.
+	MAX_DENS	value		# max. density (el/cubA) for solver;
+					# default 1000.
+
+	DETWIN		TRUE/FALSE	# crystal detwinning? default FALSE 
+	T_TYPE  	A or I		# A (amplitude) or I (intensity)
+	T_MATRIX  	9 values	# twinning matrix transformation
+	T_FRAC  	value		# twinning fraction (0 -0.5)
+	RECORD          /a/b/.../name	# full path to record-keeping filename 
+
+Optional input for MIR and/or MAD only, where [n] stands for 1, ... nder, is:
+
+	FSCALE_DER[n]  	value 		# default: 1., scaling factor for 
+					# placing fobs data on an abs scale
+	AUTOSCALE	TRUE/FALSE	# default TRUE, to tune scaling
+					# factors between iterations.
+	RELWT_DER[n]  	value 		# default: 1., relative weights for 
+					# derivatives in cost function.
+	RELWT_NATIVE	value 		# default 1, weight for (hkl) space 
+					# cost function for native.
+	ANOM_DER[n]	TRUE/FALSE	# is derivative anomalous?
+
+Input for phase extension target constraints only (in addition to target and
+weight file names) is:
+
+	PHASE_EXT_RES	value		# no default.
+
+Input for high-resolution processing only is:
+
+	HIGHRES		TRUE		# default: FALSE
+	HRCUTOFF	value		# hrcutoff*<vox> = highres cutoff
+					# default: 10.
+
+Input for the robust cost function (see robust.hlp) is:
+
+	ROBUST		TRUE		# default: FALSE
+	ROB_FACTOR	value		# fractional extent of usage
+
+Any line containing anything else as its first symbol (keyword) is ignored.
+Input may be ordered arbitrarily.  Numbers are in free format.
+
+If the value of a keyword is a file name, a legal value is "empty" signifying 
+that there is no such file and all entries should be set to 0; of course, this 
+is appropriate only in special cases.  For example,
+
+	FC_FILENAME	empty		# MIR, no starting fcalc for native
+	MD_FILENAME	empty		# MIR, no starting model for native
+
+You can use "empty" as the name of an fobs file, but it is appropriate only in
+a MAD/MIR run with no native (relwt_native = 0).
+
+Similarly, a legal value for a target weight filename is "full", signifying
+that all entries should be set to 1.  E.g.,
+
+	WT_FILENAME1	full		# use all 1's to weight the target.
+
+The fc_filename may have a value "none" (or, equivalently, may be absent).  
+This signifies that Solve should run Forth internally, using the md_filename 
+as its source -- a perfectly legal (and reasonable) way to generate consistent 
+structure factors.

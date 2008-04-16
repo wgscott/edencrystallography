@@ -1,0 +1,14 @@
+#
+#  This script takes the output of regrid (count_electrons)
+#  and separates the various species, then plots the counts
+#  Run it by typing, e.g.:
+#
+#	count_script run3 j
+#
+#  where run3_2.count is the output of the count_electron process.
+#
+grep "  O" $1_2.count |awk '{print NR, $12}' >$2O
+grep "  C" $1_2.count |awk '{print NR, $12}' >$2C
+grep "  N" $1_2.count |awk '{print NR, $12}' >$2N
+grep "  P" $1_2.count |awk '{print NR, $12}' >$2P
+xmgr $2O $2C $2N $2P -legend load

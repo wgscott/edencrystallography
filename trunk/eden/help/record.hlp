@@ -1,0 +1,50 @@
+
+			RECORD KEEPING IN EDEN
+
+In order to keep track of multiple Eden runs, records of the runs 
+are maintained.   By default, they are written to a file named
+'history' in the pwd,  However, you may choose another directory
+and/or name, via a keyword-value pair which is optional in all 
+input files for Eden runs - 
+
+RECORD	[full path to a file name]
+
+For example -
+
+RECORD	/home/hanna/horseradish/1.6A/bookkeeper
+
+The file "bookkeeper" will contain a brief record of each Eden 
+program that was run for "horseradish/1.6A".  Typically, you might 
+maintain sub-directories under /home/hanna/horseradish/1.6A - for 
+example:
+
+	fcalcs/   fobs/   back/   target_prep/   run1/   run2/   
+
+etc.,  but such a sub-directory tree structure is not mandatory.
+Each record in "bookkeeper" consists of 4 lines containing:
+
+	the date and time at which the run was started;
+	the directory from which Eden was being run;
+	the command line;
+	and the outcome (success or failure)	
+
+You don't have to create the file "bookkeeper" - it will be created
+automatically as soon as you do your first Eden run. 
+
+Note that some "unusual" errors - e.g., typos in the command line.  
+occur before the presence or absence of record keeping can be 
+established, so they cannot be written to the record.   Similarly, 
+requests for help do not trigger a record entry.  
+
+Here is a partial example of a record:
+
+Thu Jul  6 15:37:25 2000
+Running EDEN from /home/hanna/horseradish/1.6A/fobs
+Command Line: eden apodfo cp3-5 data3-5.fobs
+Eden ended successfully
+
+Thu Jul  6 15:42:28 2000
+Running EDEN from /home/hanna/horseradish/1.6A/back
+Command Line: eden -v back cp3-5
+Eden ended with an error - check log
+

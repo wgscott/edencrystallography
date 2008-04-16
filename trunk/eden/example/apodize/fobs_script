@@ -1,0 +1,22 @@
+#
+# Put original into X-PLOR format
+#
+awk -f awkit <../originals/cramb2m.fo >j1.hkl
+#
+# Insert the correct value of F(000)
+#
+cat F000 j1.hkl >j2.hkl
+#
+# Apodize it
+#
+eden apodfo apo j2.hkl
+#
+# Since there is no output apodized version (no j2_P1_apo.hkl) we will
+# use j2.hkl as our result.
+#
+mv j2.hkl cramb.fobs
+#
+# Clean up
+#
+rm j*.hkl 
+rm *wil*

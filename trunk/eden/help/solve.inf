@@ -1,0 +1,20 @@
+
+********************************************************
+
+Run this program by typing
+
+	eden [-v]  solve  pname
+
+where pname stands for an input parameter file name
+without extension '.inp'
+
+     optional -v (verbose) flag produces a cost 
+     function listing in pname.cost;
+     default (no -v) produces no pname.cost.
+
+For more information, type 
+
+	eden -h solve 
+
+********************************************************
+

@@ -1,0 +1,45 @@
+
+Variance reads M (in range 2 - 50) files containing electron/voxels.  
+It calculates and writes binary files containing four measures of variance:
+
+1.  The average, average.bin,  at each point np:
+
+	ave(np) = <np> = (1/M) * Sum[np] 
+
+2.  The standard error, sterror.bin:
+
+	ste(np) = sqrt[1/(M-1) * Sum[np - <np>]^2] 
+
+3.  The error-weighted average, erwm.bin:
+
+	erw(np) = (<np>^2 / (<np> + ste(np))  
+		
+4.  The "unreliability", unr.bin: 
+
+	unr(np) = (ste(np) / (pert*<np> + ste(np))  
+		
+where Sum is over m = 1, 2, ... , M for the M files to be studied and 
+      pert is a fractional measure of the variability of the sources of 
+           the M maps.
+
+Run Variance by typing:
+
+	eden  variance  pname  pert sname1 sname2 sname3 ...
+
+where pname stands for a parameter file without extension .inp and up to 50 
+names of electron/voxel files may be entered for measuring their variances.
+
+The obligatory input in pname.inp is the standard set of information:
+
+	RESOLUTION	res   		# resolution in Angstrom
+	SYMMETRY 	name		# symmetry group 
+	CELL		a b c alpha beta gamma	
+					# unit cell dimensions in Angstrom 
+					# and angles in degrees 
+
+
+There is no optional input, other than possibly a non-default grid type
+and record filename:
+
+	GRID_TYPE  	string 		# 'simple' or 'body-centered'
+	RECORD          /a/b/.../name	# full path to record-keeping filename 

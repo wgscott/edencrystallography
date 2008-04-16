@@ -1,0 +1,5 @@
+for file in *.[cfh]
+do
+     echo "Comparing "$file
+     diff $file ~/EDEN/source
+done

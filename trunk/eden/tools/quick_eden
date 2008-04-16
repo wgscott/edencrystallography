@@ -1,0 +1,139 @@
+# 			quick_eden
+#
+# This command file takes an Fobs file and a coordinate file.
+# It calculates Fcalc's from the coordinate file and calculates sigmaa weights. 
+# It then calculates two maps: a conventional 2Fo-Fc map and an EDEN Back map.
+# The EDEN map is positive everywhere and should have no truncation artifacts.
+#
+# John Somoza and Hanna Szoke.  Last modified 19/6/00.
+
+##########  This is where the specifics for the problem are defined ##########
+
+set model_file = bmin12bgmp_trun_1_50.pdb  # PDB file
+set fobs_file = hgx816a.mtz
+set lores=10.0
+set hires=1.9
+set spacegroup = P21
+set cell = "48.96 74.92 55.72 90.0 110.8 90.0"
+set F000 = 50000.0
+
+################################################################################
+
+# Write an input file for the EDEN runs.
+
+cat > quicke.inp <<  EOF
+input_res       $hires
+cell  $cell
+symmetry  $spacegroup
+fc_filename del_P1_apo.fcalc
+EOF
+
+# Write an awk command file to reformat an X-PLOR FCALC file (used later on).
+
+cat >awkit << EOF
+BEGIN {print "IND 0 0 0 FCALC $F000 0"} \
+{if (\$1=="INDE")printf "%s %s %s %s", \$1,\$2,\$3,\$4; \
+if (\$1=="FCALC=")printf " %s %s %s \n", \$1,\$2,\$3}
+EOF
+
+# Add the appropriate header to the pdb file...
+
+pdbset xyzin $model_file xyzout temp.pdb << EOF
+cell $cell
+spacegroup $spacegroup
+xplor
+EOF
+
+# Generate Fc's from the model...
+
+sfall XYZIN temp.pdb HKLIN $fobs_file HKLOUT sfall.fcalc << EOF
+TITLE structure factors from model: $model_file
+MODE  SFCALC XYZIN HKLIN
+RESO  $lores $hires
+BINS  20
+FORM  NGAUSS 5
+FORM  NGAUSS 5 P
+SFSG  $spacegroup
+LABI  FP=F SIGFP=SIGF
+LABO  ALLIN
+END
+EOF
+
+# Scale the Fc's and Fo's. Note that we are switching the Fo's and Fc's when
+# we read them in and then again when we write them out. this is because rstats 
+# scales the Fc's to the Fo's instead of the other way around.
+
+rstats HKLIN sfall.fcalc HKLOUT rstats.mtz << EOF
+OUTPUT ASIN
+PROCESS FCAL
+WEIGHT NONE
+RESO  $lores $hires
+RSCB 6.0 $hires
+LABIN FP=FC SIGFP=SIGF FC=F PHIC=PHIC
+LABOUT FP=FC SIGFP=SIGF FC=F PHIC=PHIC
+PRINT ALL
+EOF
+
+# Now sigmaa-weight the reflections:
+
+sigmaa HKLIN rstats.mtz HKLOUT after_sigmaa.mtz << EOF
+partial
+labin FP=F SIGFP=SIGF FC=FC PHIC=PHIC
+EOF
+
+# At this point two maps are going to be made. One will be a conventional
+# 2Fo-Fc difference Fourier map and the other will be a Back version of the
+# same map.  Eventually, their names will be 2fofc.map and eden.map.
+
+# First the difference Fourier map will be made using the program fft.
+
+fft HKLIN after_sigmaa.mtz MAPOUT 2fofc.map << EOF
+TITLE 2Fo-Fc Map
+RESOLUTION $lores $hires
+FFTSPACEGROUP 1
+LABIN F1=FWT SIG1=FWT PHI=PHIC
+end
+EOF
+
+# Now the 2Fo-Fc map is extended so that it covers the model file.
+
+extend MAPIN 2fofc.map MAPOUT 2fofc.ext XYZIN $model_file << EOF
+
+END
+EOF
+ 
+# Now we will make the EDEN map. The first step is to change the format of the 
+# structure factor file so that it can be read by the EDEN programs.
+
+mtz2various HKLIN after_sigmaa.mtz HKLOUT del.xplor << EOF
+RESOLUTION $lores $hires
+OUTPUT XPLOR
+EXCLUDE SIGP 0.01   # to exclude unmeasured refl.
+LABIN FP=F SIGFP=SIGF FC=FWT PHIC=PHIC
+END
+EOF
+
+awk -f awkit < del.xplor > del.fcalc
+
+~hanna/bin/eden expandfc quicke del.fcalc
+cp del_P1.fcalc del_P1_apo.fcalc
+~hanna/bin/eden apodfc quicke del_P1.fcalc
+~hanna/bin/eden back quicke
+~hanna/bin/eden regrid reg quicke_back 2
+
+# Remove some excess files:
+
+/usr/bin/rm rstats.mtz
+/usr/bin/rm after_sigmaa.mtz 	# my addition
+/usr/bin/rm sfall.fcalc
+/usr/bin/rm temp.pdb
+/usr/bin/rm del.fcalc
+/usr/bin/rm del_P1*
+/usr/bin/rm quicke_back.*
+cat expandfc.log apodfc.log back.log regrid.log > eden.log
+/usr/bin/rm apodfc.log back.log expandfc.log regrid.log
+
+# Rename the two maps: 
+
+mv 2fofc.ext 2fofc.map
+mv quicke_back_2.map eden.map

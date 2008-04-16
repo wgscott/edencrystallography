@@ -1,0 +1,3952 @@
+
+%\font\bfbig=cmbx10 scaled\magstep4  
+%\font\bftitle=cmbx10 scaled\magstep1
+%\font\smbftit=cmbx10 scaled\magstep2
+%\font\amb=cmtt10 scaled\magstep0
+%\font\bgtt=cmtt10 scaled\magstep1
+
+% The "twoside" in documentstyle sets positioning of 
+% page numbers on the page./
+%   \documentstyle[fullpage,twoside]{report}
+\documentclass{report}
+\addtolength{\hoffset}{-15mm}
+\addtolength{\textwidth}{3cm}
+\addtolength{\textheight}{3.5cm}
+\usepackage{times,makeidx}
+\makeindex
+
+\begin{document}
+
+\title{{ Eden User Manual} \\ Version 5.2}
+\author {Hanna Sz\H{o}ke}
+
+\maketitle
+
+\parindent=0pt 
+\baselineskip=18pt 
+\lineskip=0pt
+\pagenumbering{roman}
+
+\tableofcontents
+
+\pagestyle{headings}
+
+\def\delfo{$\delta_{fo}$~}
+\def\delfc{$\delta_{fc}$~}
+\def\qq{\qquad\qquad}
+\def\hbar{\overline{h}}
+
+
+% OFF WE GO .......
+
+\chapter{Introduction} 
+\label{intro}
+\pagenumbering{arabic}
+
+\begin{quote}
+\raggedleft Lack of information cannot be remedied \\
+by any mathematical trickery. {\em L\'anczos}\cite{lanczos}
+\end{quote}
+
+\vspace {0.1in}
+
+The computer program Eden (short for \underline{E}lectron \underline{den}sity)
+is based on a real-space method for crystallography.  The origin of the 
+method came from the analogy between holography and the problem of 
+recovering the electron density of molecular constituents of a crystal.
+It reins in the techniques of image processing to aid in the search for a 
+crystal structure.
+
+\vspace {0.1in}
+
+The most unconventional feature of the holographic method is that it is
+a real-space method: it searches for a distribution of electrons in the unit
+cell that meets all the known constraints on the molecules themselves, while
+giving rise to the observed diffraction pattern.  The phases are thus free
+to change (within certain limitations).
+This manual gives short shrift to the theory of the holographic method.  
+However, it is important that as a 
+potential user of the program, you become familiar with that theory.  
+For an overview of the theory, see~\cite{edenwww}.  More detailed 
+information is in \cite{eden2}~and~\cite{eden4}.  
+Recent papers, \cite{eden5} and \cite{eden6}, give further details.  
+We urge you to read \cite{edenwww} before you attempt to run Eden.
+
+\vspace {0.1in}
+
+It may be helpful to explain from the outset what Eden does {\em not} do.  It
+does not deal in atoms at all: except for one recently-added module,
+it neither reads nor writes pdb files (except
+in very trivial circumstances), it has no knowledge of chemical bonds or 
+valencies, let alone amino acids or helices.  
+However, that is not to say that it cannot determine the positions of atoms!
+It may provide a well-circumscribed volume within the unit cell which can easily
+be identified as a sulphur atom, for example, when viewed under O, but
+the word ``sulphur'' will not appear in the Eden output.   Essentially,
+the only piece of chemical information that the program has and uses very 
+effectively is that electrons cannot have negative density!  
+The connections of Eden to the world of conventional crystallography are 
+via the structure factors -- fobs measurements that are read and fcalc 
+models that are read and written -- and map files for visualization that are
+written.
+
+\vspace {0.1in}
+
+Eden is capable of solving crystals containing macromolecules (proteins,
+RNA or DNA) of current
+interest to biologists and biochemists
+Recently, physicists have shown an interest in
+using Eden for very high-resolution work with inorganic crystals as well.
+Eden's main advantages are that it has less bias toward
+its input model than usual methods and is capable of incorporating
+additional information in a consistent and optimal way.  The program runs 
+in a time of order $ NlogN $ and it needs storage of order $ N $, where
+$ N $ is the total number of resolution elements, which is about the
+number of reflections collected.  Eden is essentially scale-independent: it is
+equally capable of finding single atoms
+in a cubic crystal measuring 5 \AA ngstrom to a side, as it is in identifying a 
+protein subunit in a 500 \AA ngstrom crystal of the Ribosome -- always, 
+given adequate resolution and accuracy of the measurements.
+
+\vspace {0.1in}
+
+Eden is written in standard C.  It has run successfully on
+a variety of workstations in the Unix environment:
+SUN Sparc stations, Silicon Graphics Iris and Indy Irix,
+IBM RISC System/6000 Model 550, HP9000 and DEC alpha, and also
+under Linux on a MacOS X.
+
+\vspace {0.1in}
+
+Eden consists of the actual solver program (Solve\index{Solve}) plus an 
+extended number of utility programs, all of which 
+are included under a single main controller.
+A general description of the solver, using Crambin as an example,
+is described in Chapter~\ref{general}.
+Chapter~\ref{files} deals with files: input, intermediate and output.
+Chapter~\ref{solver} returns to the solver, with a more detailed description 
+appropriate for realistic runs.
+Chapter~\ref{mir-mad} revisits the solver for a discussion of runs with
+multiple isomorphous replacement (MIR)\index{MIR} and 
+multiple anomalous dispersion (MAD)\index{MAD}.
+The same program, Solve\index{Solve}, is used in these cases.
+Chapter~\ref{constraints} discusses the available physical-space constraints 
+that may be applied in Solve\index{Solve}.
+Chapter~\ref{RSconstraints} discusses the available reciprocal-space 
+constraints that may be applied in Solve\index{Solve}.
+Chapter~\ref{preprocessors} turns to the preprocessors: 
+Apodfc\index{Apodfc}, Apodfo\index{Apodfo}, Back\index{Back}, 
+Expandfc\index{Expandfc}, Expandfo\index{Expandfo}, Maketar\index{Maketar}, 
+Perturbhkl\index{Perturbhkl} and Sym\index{Sym}.
+Some of these will have to be run before you can solve any real problem.
+Chapter~\ref{postprocessors} describes postprocessor, Regrid\index{Regrid}.
+Chapter~\ref{evaluation} reviews evaluation utilities: 
+Dphase\index{Dphase}, Distance\index{Distance}, Count\index{Count}, 
+Shapes\index{Shapes} and Variance\index{Variance}.
+Chapter~\ref{advanced} includes some
+details for fine-tuning runs, invoking other utilities, running 
+the latest addition to Eden's modules -- Refine\index{Refine} and
+experimenting with the source code.
+Appendix~\ref{app-installation}
+gives instructions for installing Eden;  and
+Appendix~\ref{app-tools} describes scripts for handling multiple jobs.
+
+\vspace {0.1in}
+
+Version 5.2 differs from earlier versions in that it is controlled within 
+GROMACS.  Also, it is able to work in two modes: using floating-point 
+arithmetic throughout or using double-precision arithmetic throughout.  
+While the double version is undoubtedly more precise, size and even time 
+considerations make the possibility of using floating-point arithmetic 
+quite attractive.  The choice is determined by a single flag in the Makefile.  
+Version 5.2 contains a new module, Refine, that will allow you 
+to fine-tune your .pdb file on the basis of a reliable Eden map.
+Please note:
+
+{ \qq\it{Even if you are familiar with Eden, please check out Appendix~\ref{app-installation} for}
+ 
+\qq\it{instructions on re-installing the FFTW package and fine-tuning the Makefile.}}
+ 
+\vspace {0.1in}
+
+Other changes include parsing of pdb
+files without using a special AWK script; and handling of .fobs files that include phase
+information.  Both fobs and fcalc files are now written out in a format that enables them 
+to be read by other standard crystallographic programs.
+You no longer need to explicitly set a shell variable named
+\$EDENHOME (the full directory path that ends with {\tt EDEN} or {\tt eden});
+this is done
+automatically during the 'make' procedure.
+The versions in the 5 series also differ from earlier ones in the following
+ways:  A more up-to-date version of FFTW is used.  The current version saves 
+the fft ``wisdom'', enabling reusage in runs within the same directory.  This has 
+two advantages: (a) multiple runs under identical conditions give bit-for-bit
+agreement, which is not always the case when there is no such available wisdom
+file; (b) the time spent by EDEN setting up the fft parameters for a repeat run
+is essentially instantaneous, in place of a time of order 1 minute.  However, we are 
+still using version V2 of the FFTW package. 
+
+\vspace {0.1in}
+
+The electron density histogram information in 
+Solve and Back is now given a sub-decade breakdown whenever one decade 
+contains ${>50\%} $ of the data.  In Solve\index{Solve} 
+there is a high-resolution input option for accurately recovering
+sharp peaks in the electron density.
+In Solve,  the fcalc is generated internally and automatically from its
+physical-space counterpart.
+Generally, Expandfo\index{Expandfo} and Expandfc\index{Expandfc} need not be 
+used, since expansion to P1 is handled internally by programs reading fobs and
+fcalc files.
+There are modules for phase extension, singlet and triplet invariants and 
+for amplitude and intensity detwinning (see Chapters~\ref{constraints} 
+and ~\ref{RSconstraints}).
+
+\vspace {0.1in}
+
+Code for scaling\index{scaling} the fobs to fcalc files has been incorporated 
+into the apodization procedure.
+The scaling factor for fobs to fcalc, identified by keyword 
+FSCALE\index{keywords!FSCALE}, is now a mandatory input parameter to 
+Solve\index{Solve}.
+Non-crystallographic symmetry has been withdrawn as a constraint.
+Regarding the modes of operation of Solve (completion or correction), correction
+is now the default mode.  Correction mode is generally not recommended.
+There are several name changes
+among the input parameters and a few changes in the default
+values of parameters.  For example, by default, sigma values in the fobs file
+{\em are} now used.  
+There are new tools for comparing the results of runs that should be 
+similar (e.g., Solve runs of variously perturbed starting models).
+For all these reasons, even if you are already familiar with Eden, 
+you should nevertheless check out this manual or the help files before 
+resubmitting old input or using Eden for new problems.
+
+\chapter{General Operation of Eden}
+\label{general}
+
+\section{How to Get Started in Eden}
+\label{general-start}
+
+When you have properly installed Eden on your system (as described in 
+Appendix~\ref{app-installation}), you can run a test problem 
+in the {\tt example/} directory.  It contains a README and four directories ---
+
+\vspace {0.1in}
+
+${\tt\qq originals/\qq solve/\qq apodize/\qq back/}$
+\vspace {0.1in}
+
+The file README contains fairly detailed information on what's here 
+and how to use it.  In particular, originals/ contains zipped files that 
+have observed data, a ``partial'' fcalc, and the original .pdb file (that 
+you will not, in fact, need for exercising Eden).  The directories 
+apodize/, back/, and solve/ (to be used in that order) contain what is
+needed to apodize and scale the starting files; prepare a real-space
+file corresponding to the partial model; and run Solve to find the missing 
+electron density.
+
+\vspace {0.1in}
+
+In each Eden run, you will type the word ``eden'' followed by the name of the
+Eden module that you wish to run (e.g., ``back'') followed by the name of an 
+input file (e.g., ``par'', standing for the file ``par.inp'').  Usually, there 
+are no further words that are required to run eden (although there may be 
+optional flags, such as ``-g'' for ``enable graphics'').  All of this will be
+described more fully in this manual.  Each Eden module writes out a log of
+the run in question, whose name is the module name with extension ``log''.
+For example, file {\tt solve.log} is a log of the Solve run. 
+All messages that were sent to your terminal will go to the log file
+as well.  The log also contains a recapitulation of the run mode and 
+parameters, information about the input files, details regarding the R
+factor, the range of electrons/voxel in the output file, and the time
+spent for the run.   Other output files depend on the module being run.
+All of them will be discussed below.
+
+\section {Basic Parameters in the Input}
+\label{general-basic-parameters}
+
+If you examine the file {\tt floor.inp} (see Table~\ref{table-toy}), 
+you will see both familiar and
+not-so-familiar input parameters.  A brief summary of the
+contents of that file follows.  More exhaustive information, 
+including parameters that have taken default
+values for this particular problem, will be given in Section~\ref{files-eden}.
+
+\begin{table} [htb]
+\caption {\large Contents of {\tt floor.inp}}
+\label{table-toy}
+
+\begin{tabbing}
+XXXXXXXXXXXXX \= nnnnnnnnnnnnnnnnnnnnnn \=
+blahblahblahblahblahblahblahblah \kill
+\#  The pound sign (\#) indicates comments that are ignored by Eden. \\
+\\
+CELL \> 40.802~~18.519~~22.379~~90.~~90.57~~90. \\
+SYMMETRY \> P21 \\
+INPUT\_RES \> 0.93 \\
+FSCALE \> 0.8      ~	\# as determined in apodfo \\
+FO\_FILENAME \> ../apodize/cramb.fobs  \\
+MD\_FILENAME \> ../back/par\_back  \\
+MODE \> correction \\
+\\
+\end{tabbing} 
+\end{table}
+
+\vspace {0.1in}
+
+$\bullet$ CELL.\index{keywords!CELL} This is the usual set 
+of unit cell dimensions --- $a$, $b$ and 
+$c$, in \AA ngstroms, followed by the angles $\alpha, \beta$ 
+and $\gamma$ in degrees.  
+
+$\bullet$ SYMMETRY.\index{keywords!SYMMETRY}
+This is the usual name of the space group, written without subscripts (e,g,
+P212121).
+
+$\bullet$ INPUT\_RES.\index{keywords!INPUT\_RES}  
+This is the data 
+resolution in \AA ngstroms.  You may also use the name
+RESOLUTION \index{keywords!RESOLUTION}.
+
+$\bullet$ FO\_FILENAME.\index{keywords!FO\_FILENAME}  The name 
+of the fobs file.
+
+$\bullet$ MD\_FILENAME.\index{keywords!MD\_FILENAME}
+The name of a real-space model in intermediate file format 
+(omitting extension{\tt .bin}) that is the starting model. Preparation of such 
+a starting model is the job of Eden's preprocessor, Back\index{Back}.
+
+$\bullet$ MODE.\index{keywords!MODE} 
+This may be ``completion'' or ``correction'', but ``correction'' is actually the default.
+
+
+\section{Help}
+\label{general-help}
+
+Online help is available for each of the Eden programs.
+By typing 
+
+\qq {\tt eden} 
+
+you will get some general information.  By typing
+
+\qq {\tt eden {\it program}} 
+
+you will get general information about the named {\it program}
+(e.g. Solve\index{Solve} or Back\index{Back}).  
+If you invoke an Eden program incorrectly
+(with the wrong number of arguments), you get
+the same information.  
+
+If you invoke an Eden program with missing arguments -- e.g.
+
+\qq {\tt eden {\it apodfo} {\it param\_file\_name}} 
+
+you will be prompted to type the missing information.
+
+
+If you invoke help explicitly by typing
+
+\qq {\tt eden -h {\it program}} 
+
+you will be provided with guidance on the preparation of the input 
+for {\it program}. An alphabetical list
+of all Eden's keywords\index{keywords} (all the items appearing in input files),
+with brief explanations, may be reviewed by typing
+
+\qq {\tt eden -h keywords\index{keywords}} 
+
+
+\section{Terminology}
+\label{general-terminology}
+
+In order to keep matters as clear as possible, we try to 
+reserve the word ``model''
+for protein\footnote {In this manual, I frequently refer to all macromolecules 
+as ``proteins'' even though RNA and DNA structures -- and even 
+inorganic crystals! -- are treated on an equal footing.}
+or data derived from a pdb\index{pdb} file or from a standard crystallographic
+program --- i.e., data based on chemical information.  Thus we may have model
+input structure factor files, as well as real-space models, derived from them
+by applying Eden's preprocessor utility, Back\index{Back}.  
+On the other hand, files generated by Solve\index{Solve} will be
+referred to as structure-factor solutions (in Fourier space) and real-space
+solutions, which may be converted to electron density maps by running them through
+Eden's post-processor, Regrid\index{Regrid}. 
+When the origin of a structure factor file may be either an
+externally-derived model --- from MLPHARE, for example --- or the output of
+some Eden program, we will refer to it simply as an fcalc file.
+Similarly, when a real-space data file may be either derived from a model 
+or generated by Solve\index{Solve}, we will refer to it as an 
+electron/voxel file. Note that the output of the postprocessor, 
+Regrid\, is {\em not} an 
+electron/voxel file, but rather a sampled
+electron density file in units of electrons/\AA$^3$.
+
+\section{Notation}
+\label{general-notation}
+
+In this manual, the messages coming to your terminal and your input 
+to the terminal are
+shown in {\tt typewriter} font for verbatim input or in {\it italics}
+for symbolic input.  Optional parameters are listed inside square
+brackets {\tt [~]}.  Keywords are written in upper-case, although you
+may use either case in your {\tt .inp} files.
+When the value of a keyword such as FSCALE\index{keywords!FSCALE} is referred
+to in the text symbolically, it is called $fscale$.  
+
+\vspace {0.1in}
+
+In the text of this manual, names of all crystallographic software packages,
+including Eden itself, and the names of the Eden programs,
+are capitalized for clarity;
+when entering a command on your terminal, you may either use lower-case, e.g.
+
+\qq {\tt eden solve floor} 
+
+or capitalize the Eden program name, as in 
+
+\qq {\tt eden Solve\index{Solve} floor} 
+
+If you prefer to invoke Eden itself using upper-case E ---
+
+\qq {\tt Eden Solve\index{Solve} floor} 
+
+you will have to establish Eden
+as an alias for eden, or make the appropriate change in the 
+Makefile (see Appendix~\ref{app-installation}).
+
+\section{Display Programs}
+\label{general-display}
+
+Certain parts of Eden need built-in display capabilities: we currently use   
+% {\tt gnuplot}\footnote {Copyright (C) 1986 -- 1993~ 
+%Thomas Williams, Colin Kelly},
+{\tt xmgrace}\footnote{Copyright 1991 - 1995~Paul J. Turner},
+for showing simple $x-y$ plots.
+The applications for which such a display program is needed are discussed 
+in Section~\ref{preprocessors-apod}.
+
+\chapter {Files}
+\label{files}
+
+\section {General Observations}
+\label{files-general}
+
+There are 5 main classes of files associated with Eden:
+
+$\bullet$ Standard crystallographic files.  
+
+$\bullet$ Eden input parameter files.
+
+$\bullet$ Intermediate binary electron/voxel files.
+
+$\bullet$ Log files.
+
+$\bullet$ Cost files.
+
+Each of these categories is discussed below.  Please note that an Eden input 
+parameter file {\em always} has the standard extension {\tt .inp};
+that extension need not be used when identifying such a file as an
+input argument.  Similarly, intermediate bin files {\em always} have the 
+same standard extension {\tt .bin};
+that extension need not be written when, for example,
+such a file is used as a solvent target or an electron/voxel
+starting point. Log files and cost files have standard extensions too
+(.log and .cost).   On the other hand, structure factor files  
+do {\em not} have standard extensions; for this reason, their names
+are always written out in full.
+
+\section {Standard Crystallographic Files} 
+\label{files-standard}
+
+Briefly, standard crystallographic files
+are referred to in this manual by their usual extension: 
+fobs, fcalc and pdb.
+Files with extension {\tt .fobs} (or {\tt .fo} or {\tt .obs}), 
+{\tt .fcalc} (or {\tt .fc} or {\tt .calc}) and 
+{\tt .pdb} are used for input.   For output, 
+X-PLOR/CNS\index{X-PLOR}\index{CNS} {\tt .map} files
+are written by Eden's postprocessor, Regrid\index{Regrid}.  
+A simple awk\index{awk} script, awk\_xplor\_to\_xtal,
+to be found in Appendix~\ref{app-tools}, can convert structure factor files 
+to {\tt .phs} files for use by XtalView\index{XtalView}.
+PyMOL \index{PyMOL} uses X-PLOR/CNS\index{X-PLOR} {\tt .map}
+files, but their extension must be changed from {\tt .map} to {\tt .xplor}.
+
+\vspace {0.1in}
+
+Pdb files are not generally used directly in Eden.  However, they may 
+be invoked by the utilities Count\index{Count}, Refine\index{Refine},
+Regrid\index{Regrid} and Shapes\index{Shapes},
+and also by
+Sym\index{Sym} and Tohu\index{Tohu}.  They are used 
+for preparing the structure factors corresponding to heavy atom positions 
+in MIR\index{MIR} and MAD\index{MAD} runs 
+(see Section~\ref{mir-preparation-heavy}).  
+Also, Eden's utility Tohu can be used to prepare fcalc files from 
+pdb\index{pdb} data,
+but generally other crystallographic packages (such as CCP4/SFALL) that are more
+sophisticated (and faster) than Tohu are preferable.
+See also Chapter~\ref{advanced} for special uses of pdb\index{pdb} files
+by Eden's preprocessors and postprocessors.
+
+\vspace {0.1in}
+
+Apodfc\index{Apodfc}, Back\index{Back}, Expandfc\index{Expandfc} and 
+Dphase\index{Dphase} all read standard 
+X-PLOR/CNS\index{X-PLOR}\index{CNS} fcalc files. 
+Solve\index{Solve}, Apodfo\index{Apodfo} and Expandfo\index{Expandfo} 
+all read standard X-PLOR/CNS\index{X-PLOR}\index{CNS} fobs files.  
+Solve\index{Solve} and Back\index{Back} use data covering 
+the full half-ellipsoid 
+for which $h \geq 0$ in $(h k l)$ space; if the data are not expanded to P1
+but are in the upper half-ellipsoid, these programs will quietly expand the
+data.  Also, if the input fcalc file to Back is not in the upper 
+half-ellipsoid, Back\index{Back} will quietly 
+transfer it to the desired region.  
+Similarly, if the input fobs file to Solve is not in the upper half-ellipsoid, 
+Solve\ will transform it internally.
+Although Eden programs require input of
+only a unique set of reflections, they read them all,
+expand them to the full half-ellipsoid for which $h \geq 0$ in $(h k l)$ space.
+and verify that the expansions are consistent.  
+Note that whenever fobs files are read,
+forbidden reflections are explicitly set to zero 
+and are included in the fobs set.
+If certain reflections appear that are forbidden for the 
+space group in question, Eden reports them. Since some standard programs 
+that calculate Fcalc and Fobs are not very accurate, Solve may also
+complain about (and corret for) lack of Friedel symmetry.
+
+\vspace {0.1in}
+
+Eden expects all files related to structure factors (including those
+with heavy atom information for MIR\index{MIR} and MAD\index{MAD}) to be 
+formatted essentially like standard X-PLOR/CNS\index{X-PLOR}\index{CNS} 
+fcalc files.  In other words,
+there should be a symbol such as INDX or INDE (containing at least IND) 
+followed by values for $h$, $k$, and $l$, followed by another identifier
+and then an amplitude and (for fcalc files) a phase. For fobs files, the
+diffraction value should be followed by 2 further fields containing 
+a symbol such as SIGMA (containing at least SIG) and a value for $\sigma$.  
+Other columns are ignored\footnote{A typical awk\index{awk} script 
+for converting \.hkl
+files to X-PLOR/CNS\index{X-PLOR}\index{CNS} format 
+is to be found in Appendix~\ref{app-tools}.}.
+No special Fortran format is required; fields are expected to be delimited
+by white space (spaces, not tabs).  Regarding fobs files, Eden will by default 
+use $\sigma$ values.  Use keyword USESIG\index{keywords!USESIG}
+with value FALSE if you do {\em not}
+want to use $\sigma$'s. See Table~\ref{table-solve}.
+Note that if Eden finds no $\sigma$'s in the input fobs files, it
+will quietly turn off the USESIG\index{keywords!USESIG} setting and 
+report this in the log.
+Fobs information is expected to be amplitudes and their sigmas, {\em not}
+intensities and their sigmas.
+
+\vspace {0.1in}
+
+Both fcalc and fobs files should have an entry corresponding to
+$h = 0$, $k = 0$ and $l = 0$.
+When preparing fcalc files, you should do the calculations out to 
+infinitely low resolution (``infinity'' in X-PLOR/CNS\index{X-PLOR}\index{CNS}),
+in order to get the $(0 0 0)$ reflection.  
+As for the fobs file, you should set the $(0 0 0)$ term to contain  $N_{el}$,
+the estimated total number of electrons in the protein for the full unit cell,
+plus all solvent
+electrons, ordered and disordered.  Unless you have a better estimate,
+use $\sqrt{0.1 * N_{el}}$ for its SIGMA value.
+The actual value of the fobs at $(0 0 0)$ is not extremely critical;
+typically, we find that users may err by $10 - 20\%$ even, but your best
+ballpark number should be entered.
+While all structure factors in a model file are potentially useful, only
+those corresponding to $(h k l)$'s for which there is a measured fobs amplitude
+are actually used.  Note that good very low $(h k l)$ measurements are 
+especially helpful for successful optimization in Solve\index{Solve}.  
+For the same reason, if your very low $(h k l)$ measurements are suspect 
+(e.g., ``saturated''), you may want to exclude them from the file entirely.
+Eden deals well with missing data, but incorrect data is worse than no 
+data at all. \cite{lanczos}
+
+\vspace {0.1in}
+
+Several Eden programs write calculated structure factor files.  
+The main ones are listed here:
+Forth\index{Forth} writes a file {\it name}{\tt \_forth.hkl}
+where {\it name} stands for the input electron/voxel file; 
+Apodfc\index{Apodfc} writes a file {\it name}{\tt \_apo}{\it .ext}
+where {\it name.ext} is the input structure factor file name; and
+Expandfc\index{Expandfc} writes a file {\it name}{\tt \_P1}{\it .ext}.
+(For anomalous dispersion, it writes {\it name}{\tt \_P1plus}{\it .ext} 
+and possibly
+{\it name}{\tt \_P1minus}{\it .ext}, where {\it name.ext} is the input file.)
+Note that Solve\index{Solve} no longer writes a file {\it name}{\tt .newhkl}
+where {\it name} stands for the input parameter file
+and B\index{Back} no longer writes a file {\it name}{\tt \_back.newhkl}
+where {\it name} stands for the input parameter file. 
+if you want to know what these fcalc files look like, 
+you should run Forth\index{Forth}  
+on the real-space output of Solve or Back.
+
+Two programs write revised versions of their input fobs files:
+Apodfo\index{Apodfo} writes a file {\it name}{\tt \_apo}{\it .ext}
+where {\it name.ext} is the input fobs file name; and
+Expandfo\index{Expandfo} writes a file {\it name}{\tt \_P1}{\it .ext} 
+(For anomalous dispersion, it writes {\it name}{\tt \_P1plus}{\it .ext} and 
+possibly {\it name}{\tt \_P1minus}{\it .ext},
+where {\it name.ext} is the input fobs file.)
+
+\vspace {0.1in}
+
+If you use O\index{O} or Mapman\index{Mapman} for examining electron densities, 
+you should run the postprocessor Regrid\index{Regrid} whose final output is 
+a {\tt .map} file --- an electron density file in the 
+X-PLOR/CNS\index{X-PLOR}\index{CNS} format. 
+If you display electron densities with XtalView\index{XtalView},
+you should follow an Eden Solve\index{Solve} by running 
+Forth\index{Forth}, to prepare an fcalc
+file corresponding to the binary output of Solve\index{Solve}, and then
+running an awk\index{awk} script,
+{\tt awk\_xplor\_to\_xtal} to be found in Appendix~\ref{app-tools}.
+You may then skip the Regrid\index{Regrid} postprocessing entirely.
+
+\section {Eden Input Parameter Files}
+\label{files-eden}
+
+The operation of each of the Eden programs is governed primarily by the
+parameters in its input file, {\it{name}.\tt{inp}}.  This file consists
+of a list of keywords\index{keywords} followed by values, with no $=$ sign 
+required between them.  You may include blank lines anywhere.
+You may append comments after keyword-value pairs; 
+such comments are stripped from the
+input before it is used.  The pound sign (\#) signals the
+start of a comment.\footnote{If you prefer some other special character,
+you may change the pound sign: in the header file, {\tt util.h}, look for
+COMMENT\_CHAR, change it and then recompile/reload the whole program.}
+
+\vspace {0.1in}
+
+Keywords may be written in either lower or upper case.  (In this manual, 
+keywords\index{keywords} are always written in upper case for greater visibility.)
+They may be ordered arbitrarily.  It is assumed that no line of input
+contains more than 200 characters (including embedded blanks).
+Numbers are in free format, symbols are space- or tab-delimited, with no 
+intervening commas. 
+Keywords that are not required for a particular program are ignored.  
+This is convenient, in that an input parameter file written for 
+Solve\index{Solve} may also be used for Dphase\index{Dphase} or 
+Maketar\index{Maketar}, for example, and the superfluous input lines 
+will not interfere with the program.
+However, this also means that if you misspell a keyword, the program will
+use the default value (insofar as there is a default).
+For this reason, we recommend that you check the log of  
+Solve\index{Solve} or Back\index{Back} carefully, to verify that Eden has
+used the values you intended.  (Both Solve\index{Solve} and Back\index{Back} 
+produce log files in which the input that was ignored is listed for reference.  
+All other Eden programs also produce log files, but the ignored information
+is not highlighted in them.)  All Eden programs stop and complain if
+compulsory keywords\index{keywords} are missing or misspelt.
+
+\vspace {0.1in}
+
+Table~\ref{table-basic} lists keywords\index{keywords} and values required for 
+all Eden programs.
+Apart from Solve\index{Solve} and Back\index{Back}, most Eden programs have 
+no other required input.  
+Each keyword is followed by a typical value as it would be in a real input
+file.  Descriptive and default information are written on the right-hand side 
+of the page,  with a leading \# sign to indicate that they are comments.
+Of course, comments need not be written in your input parameter file.
+We now discuss the keywords\index{keywords} from Table~\ref{table-basic}.
+
+\begin{table} [htb]
+\caption {\large Basic Input for All Eden Programs}
+\label{table-basic}
+
+\begin{tabbing}
+XXXXXXXXXXXXX \= nnnnnnnnnnnnnnnnnnnnnn \= 
+blahblahblahblahblahblahblhablah\= none \kill
+
+Keyword \> Example of value \> description \> default \\
+\\
+SYMMETRY \> P3221 \> \# space group name \>  none \\
+CELL \> 57.2~~33.9~~68.7~~90~~90~~120 \> \# unit cell dimensions in \AA \> none \\
+\> \> \# and angles in degrees \> none \\
+RESOLUTION \> 2.0 \> \# resolution in \AA  \> none \\
+RECORD \> ../myrecord \> \# name of run history file \> history \\
+\\
+
+\end{tabbing} 
+\end{table}
+
+\vspace {0.1in}
+
+$\bullet$ SYMMETRY.\index{keywords!SYMMETRY}
+  The value associated with this keyword is the space 
+group name.  Eden recognizes all 230 space groups.  
+Rules for space group names are the same as in CCP4 \cite{ccp4} -- 
+indeed, the CCP4 file {\tt symop.lib} is used for matching the name and for
+identifying symmetry operators for the space group.
+Names are the ``short'' form given in \cite{hahn}; subscripts are typed as is
+and the overbar is typed as a leading $-$, 
+so that e.g. $P2_{1}2_{1}2_{1}$ is typed as {\tt P212121}
+and $P\bar{1}$ would be typed as {\tt P-1}.
+You should use the conventional choices that correspond to the space groups
+with the first 230 numbers in {\tt symop.lib}.  
+Alternative choices such as $P112_{1}$ and $A2$ are not accepted by Eden.
+Where there is a choice, you have to use the conventional unique axis
+(b for monoclinic crystal systems and c for trigonals and hexagonals).
+For trigonal crystal systems, you have to use 
+hexagonal rather than rhombohedral axes.  Eden does not accept space group 
+numbers.  For space groups with alternate origins, please check {\tt symop.lib}
+included in the {\tt source/}~ subdirectory of EDEN/.
+
+$\bullet$ CELL.\index{keywords!CELL}
+This is the usual set of unit cell dimensions --- $a$, $b$ and 
+$c$, in \AA ngstroms, followed by the angles $\alpha, \beta$ 
+and $\gamma$ in degrees.  Currently, the only
+global restrictions on angles is that {\it all} are either $\geq 90^\circ$ or
+$\leq 90^\circ$.
+If the angles that are given for your crystal do not satify these rules,
+possibly CCP4's AXISSEARCH \cite{ccp4} program can help you.
+Eden checks that the input cell dimensions and angles are consistent with
+restrictions imposed by the space group.  Eden sets the grid type (simple or
+body-centered) depending on the angles; if they are within $15^\circ$ of 
+$90^\circ$, a body-centered grid type is used by default  You may override the
+grid type setting by entering an explicit value for 
+GRID\_TYPE\index{keywords!GRID\_TYPE}.
+
+$\bullet$ RESOLUTION.\index{keywords!RESOLUTION}  
+This is the data resolution in \AA ngstroms.  You may also use the name
+INPUT\_RES \index{keywords!INPUT\_RES}, which was Eden's earlier name for this
+quantity..
+It corresponds closely to the maximum resolution of the fobs file.
+Eden will
+use a grid whose spacing along the three dimensions  
+is approximately
+$0.6*resolution$ for a simple grid type or $0.7*resolution$ for a 
+body-centered grid type.  The actual number of divisions along each axis
+is always a ``nice'' integer that satisfies the symmetry of the space group.
+The gridding resolution also determines 
+which structure factors are to be used in the Eden run in question.
+Determining a value for {\it resolution} is discussed in 
+Section~\ref{solver-preparation-resolution}.
+
+$\bullet$ RECORD.\index{keywords!RECORD}
+Each Eden run is summarized in four lines that are written
+into a file of your choice or, by default, into a file named {\tt history} in
+the pwd;  the summary includes: the date and time at which
+it started; the directory from which it was run; the command line; and
+the outcome (success or failure).  As successive Eden runs are done, new
+records are appended to the end of the history file.  The use of the history
+file is intended to help you keep track of multiple Eden runs 
+(when they were done, and from where, in which order, etc.)
+
+\vspace {0.1in}
+
+Table~\ref{table-solve} lists the full set of keywords\index{keywords} and values 
+for Solve\index{Solve} runs without Multiple Isomorphous Replacement 
+(MIR),\index{MIR} or multiple anomalous dispersion (MAD\index{MAD}).
+Added keywords\index{keywords} and values needed by Solve\index{Solve} 
+with MIR\index{MIR} and MAD \index{MAD} 
+are discussed in Chapters~\ref{mir-mad} and ~\ref{constraints}.  
+Optional keywords\index{keywords} and their possible values for the utilities
+are discussed in Chapters~
+\ref{preprocessors} and \ref{postprocessors}.
+
+\begin{table} [p]
+\caption {\large Complete Sample Input for Solve\index{Solve}}
+\label{table-solve}
+
+\begin{tabbing}
+XXXXXXXXXXXXX \= nnnnnnnnnnnnnnnnnnnnnn \= 
+blahblahblahblahblahblahblahblah\= none \kill
+
+Keyword \> Example of value \> description \> default \\
+\\
+\> basic input for all Eden programs (see Table~\ref{table-basic}) \> \\
+\\
+SYMMETRY \> P3221 \> \# space group name \>  none \\
+CELL \> 57.2~33.9~68.7~90~90~120 \> \# unit cell dimensions in \AA \> \\
+\> \> \# and angles in degrees \> none \\
+RESOLUTION \> 2.0 \> \# resolution in \AA \> none \\
+FO\_FILENAME \> ../data/dat\_P1\_apo.fobs  \> \# name of fobs file \> none \\
+FSCALE   \> 0.8 \> \# scaliing actor for fobs \> none \\
+MD\_FILENAME \> mod\_back    \> \# real-space model derived \\
+\> \> \# from an fcalc model.   \> none \\
+\\
+\> other basic input for Solve\index{Solve}  \> \\
+\\
+NCONSTRAINTS \> 1 \> \# no. of cost func. constraints \> 0 \\
+CON\_TYPE1 \> target \> \# description of first constraint \> none \\
+RELWT\_CON1 \> 0.1 \> \# rel. wt. for 1st constraint \> 0 \\
+TA\_FILENAME1 \> mytarget \> \# name of 1st Np space target \> none \\
+WT\_FILENAME1 \> myweight \> \# name of 1st Np space weight\> none \\
+\\
+\\
+\> uncommonly used input for Solve\index{Solve}  \> \\
+\\
+HIGHRES \> TRUE \> \# enable high-res processing \> FALSE \\
+HRCUTOFF \> 15. \> \#  highres cutoff \> 10. \\
+DFDX\_CRIT \> 0.1 \> \# gradient drop per iteration \> 0.03 \\
+GRID\_TYPE  \> simple \> \# ``simple'' or ``body-centered'' \> see CELL \\
+MIN\_DENS \> 20.0 \> \# Max. density (el/cub \AA) \> 1000. \\
+MAX\_DENS \> -0.5 \> \# Min. density (el/cub \AA) \> 0. \\
+R\_STOP   \> 0.03 \> \# R factor to terminate run \> 0 \\
+MODE \> completion \> \# how to treat initial model \> correction \\
+DISCRP\_FRAC \> 0.5 \> \# fine-tuning stopping criterion  \> 1. \\
+TITLE \> Data from 2/4/96 \> \# anything \> blank \\
+USESIG \> FALSE \> \# switch to use fobs SIGMAs \> TRUE \\
+\end{tabbing} 
+\end{table}
+
+\vspace {0.1in}
+
+We now discuss the ``other basic input'' from Table~\ref{table-solve}.
+
+\vspace {0.1in}
+$\bullet$ FO\_FILENAME.\index{keywords!FO\_FILENAME}  The name of the fobs file.
+The relative or absolute directory path name should be used if the fobs file
+is not in the directory from which you run Eden.  Generally, 
+this file will {\em not} 
+be the same file as your original set; see Chapter~\ref{solver}.
+
+$\bullet$ FSCALE.\index{keywords!FSCALE} This is the factor 
+for scaling\index{scaling} fobs data on an
+absolute scale.  See Section~\ref{solver-preparation-apod}.
+
+$\bullet$ MD\_FILENAME.\index{keywords!MD\_FILENAME}
+  The name of a real-space model in intermediate file 
+format (omitting extensions {\tt .bin}) 
+Such a real-space model is generated by running the preprocessor, 
+Back\index{Back} on the model fcalc file.  This, too, is discussed in Chapter~\ref{solver}.
+
+$\bullet$ NCONSTRAINTS.\index{keywords!NCONSTRAINTS}
+  Count of physical-space (or reciprocal-space)
+constraints in the problem.
+A number in range $(0, 12)$ is permitted, the default being $0$.
+In the following, [c] stands for a number in range 1, ... NCONSTRAINTS.
+
+$\bullet$ CON\_TYPE[c].\index{keywords!CON\_TYPE}  
+A descriptive word for the type of the c-th constraint.  Legal
+values are: ``target'' for a generic target or ``solvent\_tar'' for a solvent 
+target or ``stabilize\_tar'' for a protein target
+(there may be more than one), 
+``phase\_ext'' for phase extension,
+``singlet'' for $(h,k,l)$ singlet invariants,
+``triplet'' for $(h,k,l)$ triplet invariants,
+% ``sayre'' for a high resolution (atomicity) term, 
+or ``cs'' for crystal symmetry.
+All of these will be discussed in Chapters~\ref{constraints} and 
+~\ref{RSconstraints}.
+
+$\bullet$ RELWT\_CON[c].\index{keywords!RELWT\_CON}
+  The relative weight to be used in the cost
+function for the c-th constraint. 
+
+$\bullet$ TA\_FILENAME[c].\index{keywords!TA\_FILENAME}
+  The name of a real-space model file in intermediate
+format (omitting extension {\tt .bin}) 
+that corresponds to the c-th target constraint. 
+Such a real-space target may come from a variety of files
+(Section~\ref{solver-preparation-targets} and Chapter~\ref{constraints}).
+
+$\bullet$ WT\_FILENAME[c].\index{keywords!WT\_FILENAME}
+  The name of a real-space model file in intermediate
+format (omitting extension {\tt .bin}) 
+that corresponds to the weights associated with the c-th target.
+Such a real-space set of weights is generated by running Maketar\index{Maketar}
+(Section~\ref{solver-preparation-targets}, Chapter~\ref{constraints} and
+Section~\ref{preprocessors-maketar}).
+
+\vspace {0.1in}
+
+Note that files identified by name in the input need not be in the same 
+directory from which you run Eden; if they are not in that directory,
+you must give the path to them.  Paths may be relative or absolute.
+
+\vspace {0.1in}
+
+We now consider ``uncommonly used input'' from Table~\ref{table-solve}.
+More information is given in Chapter~\ref{advanced}.
+
+$\bullet$ HIGHRES.\index{keywords!HIGHRES} 
+  The solver will extract points that are particularly strong and handle them
+at a two-fold higher resolution.  Such points will not be written out as
+part of the usual gridded {\tt .bin} file, but will instead be written as 
+an ASCII list {\tt .list}.  The high-resolution points will be merged into
+the full array of electron densities by including this keyword in the
+Regrid\index{Regrid} input.
+
+$\bullet$ HRCUTOFF.\index{keywords!HRCUTOFF}
+ When HIGHRES is in effect, this keyword defines the fractional level at which 
+high- resolution processing will be enabled, relative to the average voxel 
+in the unit cell.  Thus, for example, using the default HRCUTOFF, if the
+average value of a voxel in the unit cell is 0.16, the high resolution points
+are those whose value is greater than 1.6.  Since this is a ``moving target'',
+the number of such high resolution points and their locations are recalculated
+at each outer iteration.
+
+$\bullet$ DFDX\_CRIT.\index{keywords!DFDX\_CRIT}
+  The factor governing the extent to which the inner loop of the 
+solver will persist in trying to reduce the gradient of the function
+being optimized, before it gives up and returns to the outer loop.
+See also Chapter~\ref{advanced}.
+
+$\bullet$ GRID\_TYPE.\index{keywords!GRID\_TYPE} 
+If any of the angles $\alpha, \beta$ or $\gamma$ is greater than 105$^\circ$,
+(as in the example in Table~\ref{table-solve}) or less than $75^\circ$. 
+Eden uses a simple grid type.
+In this grid, electrons are represented as Gaussian blobs that are
+placed at regularly spaced positions 
+starting at the (0,~0,~0) corner of the unit cell and dividing 
+the $a$, $b$ and $c$ axes of the unit cell into an integer number of subdivisions 
+$da$, $db$, and $dc$.  If all three angles are close to $90^\circ$, 
+Eden can place its Gaussians on a
+body-centered grid type, consisting of the above-mentioned simple grid 
+plus an intercalating grid.
+The intercalating grid places electrons at positions starting at 
+$(da/2, db/2, dc/2)$ and extending up by $da$, $db$, and $dc$
+along $a$, $b$ and $c$.  
+In this manner, the maximum distance between neighboring points is decreased by
+a factor of about $\sqrt{3}/2 = 0.866$ at a cost of double the storage.
+For appropriate symmetry groups such as $P2_{1}2_{1}2_{1}$, this
+body-centered grid type is generally used.  Since Eden will automatically
+choose the appropriate grid type, there seems to be little advantage in 
+setting it explicitly.  All further references to input files will disregard
+the explicit use of the keyword, but you should be
+aware that you can write it into {\em any} Eden input file.
+
+$\bullet$ MIN\_DENS\index{keywords!MIN\_DENS}.
+  A lower cut-off for the density (in 
+electron/cubic \AA ngstrom) used by the complex conjugate solver.  Under rare
+circumstances, there may be a need to set this to something other than the 
+default, 0.  A simple way to avoid changing this cut-off is to increase $F(0,0,0)$
+artificially.
+
+$\bullet$ MAX\_DENS\index{keywords!MAX\_DENS}.
+ An upper cut-off for the density (in 
+electron/cubic \AA ngstrom) used by the complex conjugate solver.  
+The default is an unrealistically large number ($10^{10}$.).  It is difficult
+to imagine circumstances under which you might want to change it.
+
+$\bullet$ R\_STOP\index{keywords!R\_STOP}.
+A (fractional) value for the overall R factor that will
+cause the solver to terminate a run.
+
+$\bullet$ MODE.\index{keywords!MODE}
+  The associated string should be either ``completion'' 
+or ``correction''.  In completion mode, Solve\index{Solve} 
+assumes that the starting electron/voxel file
+in physical space represent a correct (if incomplete) model.  
+It uses the optimization algorithm to search for 
+missing electrons only.  In correction mode, 
+Solve\index{Solve} makes no such assumption about the input model.  
+In this case, Solve\index{Solve} may {\em change} the starting 
+electron model (electron/voxel file)
+in the optimization process --- i.e., it is capable of adding, moving and
+removing electrons, so long as the resulting density remains everywhere non-negative.  
+In either mode, the output of Solve\index{Solve} 
+is the full set of electrons/voxel,
+i.e., the recovered plus the initially known electrons at each grid point.  
+We highly recommend using the default ``correction''.
+
+$\bullet$ DISCRP\_FRAC\index{keywords!DISCRP\_FRAC}
+A fraction to multiply the usual discrepancy fraction, used to determine
+whether the solver should stop looking for a better solution.
+In the default, DISCRP\_FRAC = 1.  The solver then stops when the recovered
+$||Fcalc||$ fits the experimental $Fobs$ to within its standard deviation,
+$\sigma$, on the average.  Sometimes, you may be optimistic and set
+DISCRP\_FRAC to, say, 0.3.  If you don't trust the quality of the data,
+you could use a value that is higher than 1.
+
+$\bullet$ TITLE\index{keywords!TITLE}.
+  Any string; it will be written into the log.  
+
+$\bullet$ USESIG\index{keywords!USESIG}.
+  A switch (TRUE or FALSE) governing the usage of the SIGMA
+field in an fobs file.  By default, the $\sigma$'s are used.
+
+
+\section {Intermediate Binary Files}
+\label{files-intermediate}
+
+For purposes of retaining electron/voxel information in a compact fashion, 
+Eden uses a binary file format identified by the suffix {\tt .bin}.  
+The information in this file is the voxel-by-voxel listing of
+the number of electrons and includes the 3 spatial dimensions of the
+problem plus the double grid (simple plus intercalating) where applicable.
+
+ 
+\section {Log Files} 
+\label{files-log}
+
+Each of the programs that may be invoked by Eden produces a log file whose
+name is {\tt solve.log} or {\tt apodfc.log}, etc. -- i.e., the name of the
+program that was invoked, with the standard {\tt .log} suffix.  All messages
+that come to the terminal, be they informatory, warning or error, are also
+written to the log.  There is usually added information, in particular if
+the verbose switch ({\tt -v}) is in effect.  
+
+If there is already a file such
+as {\tt solve.log} in the directory from which you now rerun Solve, the new
+log will normally be written to {\tt solve1.log}.  Up to 10 log files from a
+single Eden program may co-exist, with names 
+{\tt solve.log}, {\tt solve1.log}, \dots, {\tt solve9.log}.  
+This is good in that it prevents inadvertent clobbering of logs, but it can
+also be a nuisance if you forget that the basic {\tt solve.log}
+may not be the most up-to-date!  You can disable the multiplicity of
+log files by invoking Eden with the {\tt -b} switch (b for batch; useful when 
+running scripts).
+
+\chapter {The Solver without MIR\index{MIR} or MAD}\index{MAD}
+\label{solver}
+
+\index{Solve|(}
+\section {Preparation of Input}
+\label{solver-preparation}
+
+In this section, we discuss setting up a real problem that has neither
+MIR\index{MIR} nor MAD.\index{MAD} The required tasks (represented 
+schematically in Figure~\ref{fig-solve}) are: 
+
+$\bullet$ problem definition
+
+$\bullet$ resolution choice
+
+$\bullet$ (for anomalous data) structure factor expansion to $P1$
+
+$\bullet$ structure factor apodization and absolute scaling 
+
+$\bullet$ consistent model preparation 
+
+$\bullet$ (optionally, solvent target preparation)
+
+\def\arrow#1{\put(#1,16){\vector(1,0){10}}}
+\def\step#1{\put(2,8){\framebox(36,15)[l] {#1}}\arrow {40}}
+\def\bigstep#1{\put(2,5){\framebox(36,20)[l] {#1}}\arrow {40}}
+\def\morestep#1#2{\put(8,#1){\makebox(36,2)[l] {#2}}}
+\def\runs#1#2{\put(50,#1){\makebox(40,8)[c] {#2}}}
+\def\outcome#1#2{\put(104,{#1}){\makebox(50,8)[l] {{\it {#2}}}}}
+
+\begin{figure}
+
+\setlength{\unitlength}{1mm}
+\thicklines
+\begin{picture}(160,190)
+
+\put(15,175){\mbox {STEP}}
+\put(60,175){\mbox {EDEN RUNS}}
+\put(105,175){\mbox {OUTCOME}}
+
+\put(0,140)
+{\begin{picture}(0,0)
+   \step { 1. Problem definition}
+   \runs    {12}{(none)}
+   \outcome {18}{cell, symmetry,}
+   \outcome {15}{mode,$F(000)$,}
+   \outcome {12}{fc\_filename(1)}
+    \outcome { 8}{fo\_filename(1)} 
+\end{picture}}
+
+\put(0,115)
+{\begin{picture}(0,0)
+   \step { 2. Resolution choice}
+   \runs    {12}{(none)}
+   \outcome {12}{resolution}
+\end{picture}}
+
+\put(0,90)
+{\begin{picture}(0,0)
+   \bigstep { 3. Apodization and}
+   \morestep {10}{Absolute Scaling}
+   \runs    {14}{Apodfc\index{Apodfc}}
+   \runs    {10}{Apodfo\index{Apodfo}}
+   \outcome {16}{fc\_filename(2)}
+   \outcome {12}{fo\_filename(2)}
+   \outcome { 8}{fscale}
+\end{picture}}
+
+\put(0,65)
+{\begin{picture}(0,0)
+   \step { 4. Consistent model}
+   \runs    {12}{Back\index{Back}}
+   \outcome {14}{md\_filename}
+\end{picture}}
+
+\put(0,40)
+{\begin{picture}(0,0)
+   \bigstep { 5. Constraint(s)}
+   \morestep {10}{(optional)}
+   \runs    {18}{Apodfc\index{Apodfc}, low res}
+   \runs    {15}{Back\index{Back}}
+   \runs    {11}{Forth\index{Forth}}
+   \runs    { 8}{Maketar\index{Maketar}}
+   \outcome {14}{ta\_filename1,}
+   \outcome {10}{wt\_filename1, relwt\_con1}
+   \outcome {6} {(etc.)}
+\end{picture}}
+
+\end{picture}
+\caption{\large Preparations for Solve without MIR or MAD}
+\label{fig-solve}  
+\end{figure}
+
+\subsection {Problem definition} 
+\label{solver-preparation-specifications}
+
+It is presumed that you know the values to be used for 
+{\it cell} and {\it symmetry}, which are properties of your crystal.
+Values for {\it cell} are the usual set of unit cell dimensions --- $a$, $b$ and
+$c$, in \AA ngstroms, followed by the angles $\alpha, \beta$ 
+and $\gamma$ in degrees.  
+Eden checks that the input cell dimensions and angles are consistent with
+restrictions imposed by the space group.
+Eden is implemented for all space groups.
+
+\vspace {0.1in}
+
+Regarding {\it mode}, if the problem is in reasonable shape, you will probably want
+to use (the default) correction mode.
+In this case, the solver makes no assumption about the correctness 
+of the starting structure factor model file;
+it will change the model in the optimization process --- 
+i.e., it is capable of adding, moving and removing electrons, 
+so long as the resulting density remains non-negative.  
+
+However if the problem is more than about 50\% unknown, you may want to use
+completion mode.  In this case, you will assume the correctness of the model, at
+least in an initial Eden run, and allow the solver to recover missing electrons.
+The starting model is not eroded.  However, electrons
+may be added at positions where the model claimed a certain 
+electron/voxel level.
+
+Apart from the selection of {\it mode}, there are other
+ways in which Eden can direct the solver to maintain or change electrons 
+in designated parts of the unit cell, e.g., by using the known part as a ``protein''
+target, with a mask around it that makes Eden maintain the part you want
+and leaves everything else free to change.
+See Chapter~\ref{constraints}.)
+
+\vspace {0.1in}
+
+Problem definition requires that you also
+estimate the total number of electrons in the unit cell, $F(0,0,0)$,
+including both protein and solvent (ordered and disordered).  
+In the absence of any specific information, assume that protein
+has an average density of $\frac{1}{2}$ electrons/\AA$^3$ and solvent
+has an average density of $\frac{1}{3}$ electrons/\AA$^3$.
+Let $N_p$ represents the number of electrons of the
+protein atoms in the {\em full} unit cell 
+(i.e., all copies of the protein within the unit cell)
+and $V$ the unit cell volume.
+It is easy to show that
+
+$$ F_{obs}(0,0,0) \approx \frac{1}{3}(V + N_p). $$
+
+$N_p$ can be estimated using the pdb\index{pdb} information; 
+it is shown in Table~\ref{table-Z}
+that the ``generic'' residue has $Z_{ave} = 59.4$ electrons.  Thus
+$N_p \simeq 60 * N_{asym} * N_{res}$,
+where $N_{asym}$ is the number of asymmetric units in the crystal and 
+$N_{res}$ is the number of residues in an asymmetric unit.  
+The precise value of $F(0,0,0)$ is not 
+very critical to the success of Eden; it is probably best to err on the
+low side by about 10 -- 20\%.  The estimate should be included 
+as the first entry in the fobs file (a special ``reflection'' at $h=0, k=0, l=0$)
+and should be accompanied by a corresponding SIGMA entry, representing
+the standard deviation of that value (if you plan on using $\sigma$'s).
+In the absence of better information, use $\sqrt{0.1 * F_{obs}(0,0,0)}$.
+The fcalc file should also have an $F(0,0,0)$ entry: 
+$ F_{calc}(0,0,0) =  N_p $ with a phase of $0^\circ$.  
+If the fcalc file was calculated to ``infinity''
+with X-PLOR/CNS\index{X-PLOR}\index{CNS}, it will already contain this entry.
+
+\subsection {Resolution Choice} 
+\label{solver-preparation-resolution}
+
+The value of {\it resolution} should be your estimate of
+the data resolution.  Eden will
+use a grid whose spacing in the three dimensions ---
+$\delta{a}$, $\delta{b}$ and $\delta{c}$ --- is approximately
+$0.6*resolution$ for a simple grid type or $0.7*resolution$ for a 
+body-centered grid type.
+The precise values of $\delta{a}$, $\delta{b}$ and $\delta{c}$ and the corresponding 
+dimensions of the grid, $N_a$, $N_b$ and $N_c$, are obtained as follows: 
+the cell dimensions are divided by the desired spacing and the resulting 
+values are rounded to the closest even product of multiples of primes
+less than 19.
+That procedure is required for the Fast Fourier Transform function used 
+by Eden (FFTW)\footnote{http://www.fftw.org}. 
+Additional constraints may be imposed for specific space groups: thus, for 
+example, if the space group is $P4_{1}$, $P4_{3}$ or $P432$, $N_z$ must be 
+divisible by 4, and if the space group is $P3_{1}21$ or $P3_{2}21$, 
+it must be divisible by 6.
+
+\vspace {0.1in}
+
+{\em It is important to remember that all the procedures in steps 3 -- 7 
+in Figure~\ref{fig-solve} depend on $resolution$, 
+so they must all be repeated if you change that resolution.}
+
+\subsection {Apodization, B Factors and Absolute Scaling}
+\label{solver-preparation-apod}
+\index{Apodfc|(}
+\index{Apodfo|(}
+
+Apodization is surely the most unfamiliar concept that you will encounter
+in Eden.  Remember that Eden assembles the electron density from little blobs,
+regularly spaced on a lattice.  Now, if the real atoms in the crystal are much 
+narrower than the blobs themselves, this sort of assembly cannot work.
+In fact, it is the surest way to make Eden go berserk!  The recipe to avoid
+such a problem is to smear out the atoms to be at least as large as the blobs.
+In crystallographese, you have to increase the B factors of your atoms.  In
+the more customary scientific jargon, this is called apodization (literally. 
+``taking off its feet'')
+
+\vspace {0.1in}
+
+The preprocessors Apodfc and Apodfo do this.  They carry out an analysis of 
+the structure factor data that is similar to a Wilson\index{Wilson} plot.  
+They are used for preparing smeared versions of the ``raw'' fobs and fcalc 
+files (and also, as you will see below, for determining the scale factor 
+($fscale$), that places the fobs on an absolute scale ).
+
+The inputs to Apodfc and Apodfo are identified by the suffix (1) and
+the smeared versions are identified by the suffix (2) in Figure~\ref{fig-solve}.
+Insofar as they determine that apodization {\em is} required,
+Apodfc and Apodfo write smeared files whose names are derived 
+from their input fcalc or fobs file name by appending {\tt \_apo} to the base
+name (to the left of the {\tt fobs} or {\tt fcalc} extension).  
+Using an input named {\tt mymod.fcalc}, Apodfc would write a file named 
+{\tt mymod\_apo.fcalc}.
+
+\vspace {0.1in}
+
+Apodfo and Apodfc read structure factors from an input fobs
+or fcalc file; they average the squared amplitudes, $\|F\|^2$, within
+shells of equal thickness in a space
+of $1/d^2$, where F stands for F$_{obs}$ or F$_{calc}$ and 
+
+$$ 1/d^2 = (h^2/a^2) + (k^2/b^2) + (l^2/c^2) $$
+
+(or its generalized form for non-orthogonal crystals \cite{glusker}).  
+
+\vspace {0.1in}
+
+Calling the shell averages $<\|F\|^2>$, the programs prepare $ln(<\|F\|^2>)$ 
+as a function of $1/d^2$.
+They then find the slope of that (very roughly) linear function.
+They use two methods for deriving the slope: one is a straightforward least-
+squares minimization; the other more sophisticated method uses a ``universal'' 
+protein correction factor \cite{cowtan} 
+that suppresses much of the non-linearity.
+If you run the apodization programs with the {\tt -g} switch enabled, graphs 
+using both methods are presented for your inspection (under Xmgr) and 
+we also print out our recommendation in the terminal report -- but you may make
+your own choice.  This is discussed at greater length in 
+Section~\ref{preprocessors-apod}.
+
+Apodfc and Apodfo determine the appropriate factor 
+(\delfo or \delfc) to be used for smearing the experimental data. 
+They use \delfo or \delfc to write out the apodized file (insofar as the
+factor is greater than zero; otherwise, you should use the
+original unapodized file.)
+Once the apodized file has been written, you need not worry about the
+particular \delfo or \delfc used; it is no longer needed as input to Solve.
+The actual process of apodization is quite critical to the success of Eden's
+solver and the fitting to determine the slope is a non-trivial procedure.  
+For these reasons, we strongly urge you to inspect the Wilson-like plots 
+and to read the detailed information on apodization in 
+Section~\ref{preprocessors-apod}.  Note too that the apodization 
+of fobs data uses $\sigma$ values (insofar as they are present) unless you
+turn off the USESIG\index{keywords!USESIG} switch.  
+
+\vspace {0.1in}
+
+Next we consider scaling\index{scaling}, which is usually done as a part of Apodfo.
+{\em It cannot be stressed too often that all structure factors used 
+in Eden must be on an absolute scale.
+In our experience, careless scaling\index{scaling} is the one most common cause of poorly 
+resolved electron density in Eden.}
+
+\vspace {0.1in}
+
+The relationship upon which all scaling\index{scaling} is based may be written in the form
+$$ <||F_{\hbar}||^2> = \sum{Z_i^2} e^{-B/4d^2} $$
+or
+$$ ln (<||F_{\hbar}||^2>) = ln (\sum{Z_i^2}) - B/4d^2, $$
+where $F_{\hbar}$ is the absolutely scaled structure factor 
+corresponding to $\hbar = (h, k, l)$, 
+$Z_i$ is the number of electrons for the $i$-th atom, 
+$B$ is an average B-factor, and 
+$$ 1/d^2 = (h^2/a^2) + (k^2/b^2) + (l^2/c^2) $$
+(or its generalized form for non-orthogonal crystals \cite{glusker}).  
+Thus the graph of $ ln (<||F_{\hbar}||^2>) $ 
+as a function of $ 1/d^2 $, called a Wilson plot, should ideally be a straight line and,
+if the structure factors are absolutely scaled, 
+the y-intercept of that line
+at $1/d^2 = 0$ satisfies 
+$$      ln (<||F_0||^2>) = ln(\sum{Z_i^2}).  $$
+If $y_0$, the y-intercept of the Wilson\index{Wilson} plot, is then measured for 
+structure factors
+whose amplitudes are not necessarily scaled on an absolute scale
+and the value of $ln(\sum{Z_i^2})$ is known, the scaling\index{scaling} factor  
+to be applied to those structure factors will be:
+$$ fscale = exp[-(y_0 - ln\sum{Z_i^2})/2] = \sqrt{\sum{Z_i^2}/e^{y_0}}. $$
+\vspace {0.1in}
+
+{\em Note that the fobs data are scaled to the fcalc 
+and not the other way around 
+(as is the usual case in X-PLOR/CNS\index{X-PLOR}\index{CNS}).}
+The plot of $ ln(<||F_{\hbar}||^2>) $ as a function of $1/d^2 $
+is not actually linear at either very high resolutions or very low resolutions.
+(This effect is corrected in true Wilson\index{Wilson} plots, 
+but not in Eden's Apodfo or Apodfc.)
+At low resolutions, the solvent distorts the Apodfo\index{Apodfo} plot.  
+However, in an intermediate region, 
+bounded (by default) by 3.5~\AA ngstrom at the low-resolution end
+and by 0.05~\AA ngstrom at the high-resolution end,
+the plot is linear enough that it may be used to estimate
+the y-intercept.  That intercept is always reported as part of the 
+output of Apodfo and Apodfc.
+The bounding resolutions may be changed as
+part of the input to Apodfc and/or Apodfo.
+
+\vspace {0.1in}
+
+How should you obtain a value for $fscale$?
+After running Apodfo (or Apodfc), a file with extension {\tt \_wil}
+contains the Wilson-like plot of the apodized fobs (or fcalc) data; 
+if two such files -- one for the fobs and one for the fcalc --
+are already correctly scaled, those plots should essentially coincide
+over a fair range of abscissa values and thus: $fscale = 1$, 
+If not, one should be able to force coincidence by adding or subtracting
+a fixed value to the fobs plot.  A mechanism for doing this using  least-squares
+minimization exists in Apodfo.
+Suppose that you have first run Apodfc:
+
+\qq {\tt eden [-g] apodfc   myparam   myfc.fcalc}.
+
+Now (regardless of whether or nor you enabled graphics), there will be a file 
+named {\tt myfc\_wil} in the directory from which you ran Apodfc.  
+Next, you run Apodfo;
+
+\qq {\tt eden [-g] apodfo   myparam   myfo.fobs}.
+
+After finishing its apodization procedures, the program will ask you
+whether you want to scale --- {\tt Scale? - y or n}.  If you answer {\tt y},
+it will request the name of the file containing fc infomation; type 
+{\tt myfc\_wil} (possibly with a directory prefix).  It will then provide you
+with its best-fit value of {\it fscale} and will write a file {\tt myfo\_wil}
+containing the scaled Wilson-like plot.  If you enabled graphics, the two 
+{\tt \_wil} files will also be displayed for your inspection.
+ See also Chapter~\ref{preprocessors}.
+
+\vspace {0.1in}
+
+Here are also three alternative methods for scaling.
+(a) If you have a reasonably good model, it is fairly
+simple and accurate to use the intercepts reported by Apodfo
+($y_{0,obs}$) and by Apodfc ($y_{0,calc}$) to calculate {\it fscale}:
+$$ fscale = exp[-(y_{0,obs} - y_{0,calc}) / 2]. $$
+This method might be used for confirming the results of the more precise
+scaling procedure described above.
+
+(b)  Sharp's method: If you do not have a good model, you can use
+the value of $ln(\sum{Z_i^2})$ derived from
+the protein composition, as given in the pdb\index{pdb} file,
+in place of $y_{0,calc}$. 
+Table~\ref{table-Z} shows $\sum{Z_i}$ and $\sum{Z_i^2}$ 
+for each amino acid and for the ``generic'' protein
+which is an average, weighted by the relative abundances
+of each amino acid in proteins \cite{creighton}.
+The data in Table~\ref{table-Z} are not currently
+a part of Eden.  However, the value of $\sum{Z_i^2}$ for the full unit cell,
+based on the pdb\index{pdb} file (and thus excluding at least disordered 
+water) is calculated and reported in the Eden utility Sym\index{Sym}.
+
+\begin{table} [bht]
+\caption {Sum of $Z$ and $Z^2$ for Protein Components}
+\label{table-Z}
+
+\begin{tabbing}
+0123456789012345678901234 \= 0123456789 \= 0123456789  \= 0123456789  \= 0123456789 \kill
+\\
+\> Residue   \> $\sum{Z_i}$  \> $\sum{Z_i^2}$  \>  relative \\
+\> \> \> \>  abundance\cite{creighton} \\
+\\
+\> Ala \> 38 \> 226 \> 8.3 \\
+\> Arg \> 85 \> 489 \> 5.7 \\
+\> Asn \> 60 \> 376 \> 4.4 \\
+\> Asp \> 59 \> 389 \> 5.3 \\
+\> Cys \> 54 \> 482 \> 1.7 \\
+\> Gln \> 68 \> 414 \> 4.0 \\
+\> Glu \> 67 \> 427 \> 6.2 \\
+\> Gly \> 30 \> 188 \> 7.2 \\
+\> His \> 72 \> 434 \> 2.2 \\
+\> Ile \> 62 \> 340 \> 5.2 \\
+\> Leu \> 62 \> 340 \> 9.0 \\
+\> Lys \> 71 \> 391 \> 5.7 \\
+\> Met \> 70 \> 558 \> 2.4 \\
+\> Phe \> 78 \> 446 \> 3.9 \\
+\> Pro \> 52 \> 300 \> 5.1 \\
+\> Ser \> 46 \> 290 \> 6.9 \\
+\> Thr \> 54 \> 328 \> 5.8 \\
+\> Trp \> 98 \> 568 \> 1.3 \\
+\> Tyr \> 86 \> 510 \> 3.2 \\
+\> Val \> 54 \> 302 \> 6.6 \\
+\\
+\> Mean \> 59.4 \> 357  \> 100 \\
+\\
+\end{tabbing} 
+\end{table}
+
+(c) Even if you do not have a good pdb\index{pdb} file, you surely do know how many 
+residues are in the protein and that will yield a fair estimate of 
+$ln(\sum{Z_i^2})$; use the observation (see Table~\ref{table-Z}) 
+that the average value of this sum for a single
+``generic'' residue, $\overline{Z^2}$ is 357.  
+Thus the full sum is $\simeq 357 * N_{asym} * N_{res}$,
+where $N_{asym}$ is the number of asymmetric units in the crystal and 
+$N_{res}$ is
+the number of residues in an asymmetric unit.  Note: asymmetric unit, 
+not molecule; if your crystal has non-crystallographic symmetry,
+you should sum over the molecules so related.
+
+\index{Apodfc|)}
+\index{Apodfo|)}
+
+\subsection {Consistent Model Preparation}
+\label{solver-preparation-consistent}
+
+\vspace {0.1in}
+
+Once the fcalc file is properly apodized,
+you must prepare electron/voxel files in physical space from it. 
+This is accomplished by running Back\index{Back} with {\it fc\_filename(2)} 
+as input --- see Section~\ref{preprocessors-back}.  
+
+\vspace {0.1in}
+
+Note the naming conventions: if you run
+
+\qq {\tt eden back abc}
+
+using an input file {\tt abc.inp}, Back\index{Back} will generate a file named
+{\tt abc\_back.bin}.  The name of the input fcalc file,
+identified as {\it fc\_filename(2)} in Figure~\ref{fig-solve}
+and appearing as the value associated with keyword 
+FC\_FILENAME\index{keywords!FC\_FILENAME} in
+the input parameter file {\tt abc.inp},
+is no longer in evidence; it is no longer needed.
+
+\subsection {Target Preparation}
+\label{solver-preparation-targets}
+
+The following discussion is only an {\em example} of Eden's capability to
+impose physical-space constraints.  A more extensive discussion
+will be given in Chapter~\ref{constraints}.
+This example relates to Eden's way of imposing solvent flattening.
+If you know which regions in the crystal are occupied by the solvent,
+you have a powerful tool for increasing Eden's capabilities.  
+However, the use of 
+solvent flattening or, as it is known in Eden, a solvent target,
+is optional and may not be appropriate
+if the location of large parts of the molecule are unknown.
+The description that follows can, of course, be scripted;
+all its parts run fairly or very fast and need little attention from you.  
+
+\vspace {0.1in}
+
+In order to prepare a solvent target,
+you will need an fcalc file corresponding to your best model,
+from which you have eliminated all the solvent.  Obviously, the model
+need not be all correct --- if it were, your job would be done! --- but it 
+should cover the basic volume of the full protein.  The first step is to run
+Apodfc\index{Apodfc} at a {\em very low} resolution (for example, 
+set keyword APOD\_RES to 7.0 \AA ngstrom)  
+\footnote{Another way to prepare an fcalc
+corresponding to the solvent region uses X-PLOR/CNS\index{X-PLOR}\index{CNS}; 
+see also Section {\ref{preprocessors-maketar}}.}.
+Then use the output of Apodfc\index{Apodfc} as the
+FC\_FILENAME\index{keywords!FC\_FILENAME} value and run Back\index{Back} 
+at the {\em regular} resolution.
+This provides a highly smeared version of the protein in physical space,
+at the same gridding resolution as your other electron/voxel files.  
+Next, run Maketar\index{Maketar}, which prepares two binary files
+with fixed names: {\tt weight.bin} and {\tt target.bin}.  
+The file {\tt weight.bin} contains weights of 0 or 1, where 1 indicates a 
+solvent point and 0 indicates a protein point.  The file {\tt target.bin}
+contains the target value associated with the solvent regions
+(typically, the electron/voxel value corresponding to 
+$\frac{1}{3}$ electrons/\AA$^3$).
+These two files should be used as is in the Solve process, where (assuming that 
+the solvent target is constraint \# 1) {\tt target.bin} serves as the value
+associated with keyword
+TA\_FILENAME1 and {\tt weight.bin} -- as the value associated with 
+keyword WT\_FILENAME1.
+The solver process is set up to deal with arbitrary weights in the 
+range (0,1), with allowance for levels of uncertainty in your knowledge of the
+content of a voxel, but Maketar\index{Maketar} does not currently use this 
+capability.  Maketar\index{Maketar}  will, by default, set roughly 50\% of the 
+unit cell to be solvent.  
+This default may be overridden if you have reason to believe that the solvent
+region of the crystal deviates significantly from 50\%.  
+Maketar\index{Maketar} also allows
+you to set the solvent density to any value.  By default, the solvent density
+is 0.34 electrons/cubic~\AA ngstrom.
+
+\vspace {0.1in}
+
+Finally, you must also select the relative weight 
+to use in Solve for imposing the solvent target as an optimizing condition.
+You may have to try several values for this relative weight;
+a value less than 0.001 will probably be ineffective, while a value greater 
+than 0.1 will probably enforce the target solvent value much too strongly
+giving rise to a visible ``edge''.
+For determining the relative weight, you should examine the
+cost function report.  Typically, at least in the
+first outer iteration, the target contribution
+should be relatively small; later, it should
+approach the hkl contribution or even surpass it.
+See Section~\ref{constraints-relwt}.
+
+\section {Running Solve: the Optimization Process}
+\label{solver-running}
+
+Invoke the solver by typing
+
+\qq {\tt eden [-v] solve {\it name}}
+
+where {\tt {\it name}.inp} contains the input parameters.  
+
+\vspace {0.1in}
+
+Switch {\tt -v} is the 
+verbose switch; it sends the running output of the cost function 
+(which is described in the rest of this section)
+to a file named {\it name}.{\tt cost}, for your inspection.  
+We do recommend using this option, particularly if you have constraints;
+otherwise, it is difficult to assess whether the relative weights of your
+constraints are appropriate. 
+
+\vspace {0.1in}
+
+The main loop of Solve is devoted to finding an optimal set of electrons per
+voxel.  The search, using a conjugate gradient solver \cite{getsol}, is 
+conducted in physical space; the cost function value,
+used for deciding how to progress in the search, has both 
+physical-space and Fourier-space components.
+We first consider the general flow of control, then the cost function.
+
+\vspace {0.1in}
+
+There are two levels to the iteration process --- an inner loop and an
+outer loop.  The inner loop is contained 
+within the conjugate gradient solver which continues to search until one of a
+number of criteria is met.  These criteria include ``normal'' exits: 
+the gradient has fallen to a preset fraction ($dfdx\_crit$) of its
+initial value; the cost function 
+is essentially zero; a (local) minimum in the solution surface has been found.
+Another reason for stopping is that the discrepancy principle was satisfied;
+this means that the amplitudes of the calculated structure factors
+fit the observed structure factor amplitudes to within their measurement
+error.  This happens when the cost function
+has fallen below a minimum dictated by the $\sigma$ values 
+in the input fobs file \cite{eden6}.   Letting $h$ stand for the $(hkl)$
+triplet and $N_h$ for the number of measured structure factors, the minimum is:
+
+$$    f_{min} = \left[ (N_h / 2) \sum_{h=1}^{N_h} w(h)^2 \right] / 
+                     \left[ \sum_{h=1}^{N_h} w(h)^2 / \sigma(h)^2 \right] $$
+
+where the weights, $w(h)$ are 1 wherever there is a data value at $h$,
+0 otherwise.  This stopping condition effectively prevents Solve from
+overfitting the diffraction data.  You  have added control over this ending condition
+via the discrepancy fraction, DISCRP\_FRAC \index{keywords!DISCRP\_FRAC}.
+
+\vspace {0.1in}
+
+Occasionally, there are pathological end conditions.  One such
+reason to stop the search is that a hard-wired maximum number of
+calls to the search function was reached.  
+In our experience, this is a symptom that the solver is truly stuck in some
+local minimum.  
+
+\vspace {0.1in}
+
+After the conjugate gradient solver
+returns to the outer iteration loop with its best effort, Solve
+resymmetrizes the solution (see Section~\ref{solver-symmetry}).  
+It recalculates the R factor and the standard deviation between fobs and
+newly updated fcalc data; it writes out the current electron/voxel files;
+and then it applies its own criteria for 
+continuation.  If the standard deviation is not decreasing; if the
+changes in the electron/voxel files are essentially nil; if the R
+factor has fallen below a preset cut-off ($r\_stop$);
+or if the discrepancy principle (see Chapter~\ref{advanced}) is satisfied ---  
+Solve stops.  
+
+\vspace {0.1in}
+
+Since interim information is written out after each outer loop iteration, 
+you may kill the Solve run (if you sense that it is not getting anywhere)
+without losing more than the most recent partial outer loop iteration.
+In fact, unless you are unlucky, an interrupt will trigger the Solve process to
+write out all its most current information before quitting.
+
+\vspace {0.1in}
+
+It may seem that the R factors (reported as fractions, not percentages)
+achieved by Solve are remarkably low, but our experience
+has been that their significance is limited.  Eden does not do conventional
+refinement.  It does not incorporate chemical information, such as bond
+angles and bond lengths.  Thus very low R factors may be achieved without 
+the corresponding electron density maps being necessarily meaningful.
+If the number of unknowns (electrons/voxel) is much larger then
+the number of equations (number of reflections), the solver will always be
+able to overfit a ``solution'' for which the R factor is essentially 0.
+
+\vspace {0.1in}
+
+The physical-space solutions that are calculated 
+after each outer iteration are over-written to a file: in 
+the example of Section~\ref{general-start}, the name was {\tt floor.bin}.
+
+\vspace {0.1in}
+
+The cost function always has a Fourier-space component (which may include
+MIR\index{MIR} or MAD\index{MAD} terms).  There may also be a phase extension cost 
+function in reciprocal space.
+The cost function may also have one or more 
+physical-space components, 
+each governed by its own relative weight.
+The physical-space components can include one or more target cost function(s)
+among others.  See Chapter~\ref{constraints}.
+
+\section {Maintaining Crystal Symmetry}
+\label{solver-symmetry}
+
+After each of the outer iterations of Solve and before writing electron/voxel
+arrays to disk, the arrays are symmetrized according to your
+space group.  Differences among the electron/voxel values at 
+symmetry-related points that exceed $10\%$ of their 
+average are noted and the number of such aberrant points is reported in
+the log.  The rms fractional distance between the electron/voxel values before 
+and after symmetrization is also noted.  
+In a more heavy-handed way of enforcing symmetry, 
+it is possible to use a crystal symmetry cost function 
+and ``encourage'' symmetrization of the 
+electron/voxel arrays at each internal step of the optimizer (see 
+section~\ref{constraints-cs}).
+
+\vspace {0.1in}
+
+One might expect crystallographic symmetry to be maintained without any special
+provisions, since internally, the fcalc and fobs files are checked and expanded
+to $P1$ based on the appropriate space group.  In particular, forbidden
+reflections are explicitly set to zero and are included in the fobs set,
+while missing reflections that are not forbidden are not included in
+the optimization process.  In fact, our experience is that gross crystal 
+symmetry violations in the first outer iteration of the solver are fairly 
+infrequent and generally represent errors in the input.
+There are certain exceptions to this: if your model file was prepared 
+using a version of Sfall that is not up-to-date (say, V1.5), there may be 
+inconsistencies in centric reflections.  Also, if the data are twinned, you
+may see this phenomenon.  See Section~\ref{Detwinning}.
+
+Note too that in later iterations of Solve, especially 
+when there are spatial cost functions,
+numerical instability can apparently cause some violations of
+crystal symmetry but not gross violations.
+
+\section {Output from Solve}
+\label{solver-output}
+
+In addition to a running log named {\tt solve.log}\footnote {or {\tt 
+solve{\it m}.log}, where {\it m} stands for the first available digit 
+in range 1 -- 9.  You can check the latest log name in the history file.}
+Solve produces the following output, updated after each outer iteration:
+
+$\bullet$ {\it name}{\tt.bin}, containing the 
+current solution in physical space and (if high-resolution is in effect)
+
+$\bullet$ {\it name}{\tt.list}.
+
+\vspace {0.1in}
+
+If you run Solve with the {\tt -v} (verbose) switch, there will be further output:
+
+$\bullet$ {\it name}{\tt.cost}
+
+$\bullet$ {\tt outlier0}
+
+{\it name}{\tt.cost} contains the cost function for the native
+and for each constraint, recorded at each call to the function that calculates
+the cost.  If there is MIR\index{MIR} or MAD,\index{MAD} the derivative costs are also recorded.
+The file {\tt outlier0} contains information about those reflections whose 
+current $||fcalc||$  differ by more than $4\sigma$ from the input
+$fobs$.  The information contains:  $d,~nsig,~
+h,~ k,~ l,~ Fobs,~ ||Fcalc||,~ and~\sigma$, where
+$d$~is the resolution of the reflection:
+
+$$ 1/d^2 = (h^2/a^2) + (k^2/b^2) + (l^2/c^2) $$
+and
+$$ nsig = (Fobs - ||Fcalc||) / \sigma. $$
+It is usually most convenient to sort {\tt outlier0} by the $nsig$ field in
+order to study the very far outliers.  
+(For example, use {\tt sort -nr +1 <outlier0 >soutlier0}.)
+General information about the distribution of $nsig$ among all reflections is
+to be found in the log, when the {\tt -v} option is in effect.  Although it
+is unlikely that your data will behave like a true Gaussian distribution, 
+you may hope that, by the end of the Solve run, the percentage of far outliers 
+will be fairly small.
+Note that when the solver is run with MIR\index{MIR} or MAD,\index{MAD} corresponding 
+files {\tt outlier1}, {\tt outlier2}, etc. are written for each derivative.
+In this case, the value of $nsig$ is multiplied by the appropriate relative 
+weight.  Note too that if, for some reason, you are not using the $\sigma$'s, 
+the outlier report will be meaningless, since Eden will use $\sigma = 1$ 
+everywhere.  The outlier report can be useful for checking the proper scaling
+of experimental data and the spotting of some glitches in it.
+
+\chapter {The Solver with MIR or MAD}
+\label{mir-mad}
+\index{MAD|(}
+\index{MIR|(}
+
+\section {Overview}
+\label{mir-overview}
+
+Up to this point, we assumed that you have a single set of experimental data,
+you have solved your protein at least
+partially and you have a reasonable model which you wish to complete
+and correct using Eden.  
+Now we will consider other more usual starting points for the
+determination of a protein structure.  In addition to (or 
+in place of) the native crystal
+measurement, you may have a series of measurements for 1 or more derivative
+protein crystals and a good idea of the positions,
+occupancies and B values of the heavy atoms in each of these derivatives.  
+You may also have a starting MIR
+phase set, derived, for example, from PHASES, MLPHARE, SHARP or SOLVE.  
+Additionally or alternately, you may have a series of anomalous dispersion
+measurements and, again, knowledge of the positions, 
+$f^\prime$, $f^{\prime\prime}$, Z values,
+B values and occupancies of the wavelength-dependent anomalous scatterers.
+All these data set may have their own (probably lower) resolution.
+
+\vspace {0.1in}
+
+In such circumstances, Eden is useful for fine-tuning a solution and for 
+quality checking.  It is worth the trouble if you want to get an electron
+density that optimally uses your hard-won data or if you care to know how
+isomorphous your derivatives are.  In principle, the model you publish and
+deposit in the Protein Data Bank should improve by the full, optimal use of
+X-ray data.  This, however, is very hard to quantify and we know of no 
+documented body of experience with it.
+
+\vspace {0.1in}
+
+Eden's Solve program handles problems with MIR and/or MAD data by treating 
+native and all other structure factors on an essentially equal footing.
+In the optimization process, Eden minimizes a
+cost function which is the sum of weighted terms, one for each
+measured structure factor; terms are proportional to the squared differences 
+between the calculated and measured structure factor amplitudes. 
+Now let us assume that we have -- say -- one further set of MIR measurements in
+addition to the native ones.  We can then set up a second cost function that
+measures the difference between two new sets of structure factors:  
+the native calculated structure factor amplitudes are replaced by ones that 
+include the heavy atoms, while the native measured data is replaced by data
+from MIR derivative crystal measurements.  Eden then minimizes the native plus
+derivative simultaneously.  For $M$
+derivatives, there are $(M+1)$ sets of equations to replace the single
+set of equations in our previous discussion, from which the Gaussian blobs
+for the native are to be found.
+The cost function contains $(M+1)$ times as many terms as in the simple run.
+Note that this procedure does assume complete
+isomorphism between native and derivative, except for the heavy atoms.
+
+\vspace {0.1in}
+
+The main difference between the MIR and MAD cases is in the expansion of the
+data to $P1$, which will be discussed in Section~\ref{preprocessors-expand}.  
+In this manual, we use the term ``derivative'' to refer to either an MIR
+derivative or a MAD data set.  
+The MIR or MAD algorithm is discussed in \cite{eden4} and \cite{eden5}.  
+Solve will search for the native, or (in the case of MAD) a fictitious 
+native --- i.e., the part of the molecule that has {\em no} 
+anomalous scattering.  Once again, we refer you to \cite{eden5}.
+
+\vspace {0.1in}
+
+In this chapter, we will first consider the new input parameters for an MIR or
+MAD run and the new preparation steps that are to be added to those described 
+in Section~\ref{solver-preparation} for apodizing and 
+scaling\index{scaling} all the data sets.  Section~\ref{mir-preparation} discusses the way
+in which the positions and occupancies of the heavy atoms may be more
+precisely pinpointed, by doing a series of preliminary Solve runs at 
+relatively low resolution.  
+
+\vspace {0.1in}
+
+When you have satisfied yourself that the
+heavy atoms are correctly described and the data sets are optimally scaled,
+a high-resolution run will generally yield a much improved set of
+electron densities.  In such a high-resolution run, there is no difficulty 
+(in fact, there is a distinct advantage) in combining MIR or MAD processing 
+with a solvent target.  In preparation for the high-resolution run,
+you may replace the original native model file by the best output
+from the preliminary runs;
+this improved model should serve
+both for purposes of preparing the solvent target and 
+for use as a starting model in the high-resolution run.
+Finally, Eden may be used as an excellent check of isomorphism: 
+take the best result from the high-resolution MIR or MAD run and 
+use it as a starting point versus the single data set for the native and 
+versus each of the derivative data sets separately.  
+Insofar as the results diverge from one
+another, you will be able to gauge where and by how much 
+the original crystals did not have complete isomorphism.
+
+\section {Preparation of Input with MIR or MAD}
+\label{mir-preparation}
+
+\subsection {MIR and MAD Input Parameters}
+\label{mir-preparation-input}
+
+Input parameters for a Solve run with MIR or MAD consist of exactly the same
+set of input parameters as were described in Section~\ref{files-eden}
+and Table~\ref{table-solve},
+plus the following ones shown in Table~\ref{table-mir}.
+The table lists file names and scaling\index{scaling} factors for 2 derivatives; this is
+an example only; you may have as many as 8 derivatives.
+
+\begin{table} [htb]
+\caption {\large MIR or MAD Input for Solve}
+\label{table-mir}
+
+\begin{tabbing}
+XXXXXXXXXXXXX \= nnnnnnnnnnnnnnnnnnnnnn \= 
+blahblahblahblahblahblahblahblah\= none \kill
+
+Keyword \> Example of value \> description \> default \\
+\\
+
+NDER \> 2 \> \# no. of MIR or MAD derivatives \> 0 \\
+FO\_DER\_FN1 \> xglpb\_apo.fobs \> \# 1st deriv fobs file \> none \\
+FC\_HEAVY\_FN1 \> mod1\_apo.hkl \> \# 1st heavy atom fcalc file \> none \\
+FO\_DER\_FN2 \> xglhg\_apo.fobs \> \# 2nd deriv fobs file \> none \\
+FC\_HEAVY\_FN2 \> mod2\_apo.hkl \> \# 2nd heavy atom fcalc file \> none \\
+\\
+\> for MAD only      \> \\
+\\
+Z1 \> 76 \> \# At. no. 1st heavy atom \> none\\
+FP\_FPP1 \> -17.2 20.1 \> \# $f^\prime$ $f^{\prime\prime}$ for Z1 at 1st $\lambda$ \> none \\
+Z2 \> 76 \> \# At. no. 2nd heavy atom \> none\\
+FP\_FPP2 \> -21.6 16.4 \> \# $f^\prime$ $f^{\prime\prime}$ for Z2 at 2nd $\lambda$ \> none \\
+\>  where $\lambda$ stands for wavelength  \> \\
+\
+\\
+\> (and optionally)  \> \\
+\\
+RELWT\_NATIVE \> 0.9 \> \# relative weight of native  \> 1 \\
+RELWT\_DER1 \> 0.5 \> \# relative weight of 1st der.  \> 1 \\
+RELWT\_DER2 \> 0.9 \> \# relative weight of 2nd der.  \> 1 \\
+RES\_DER1 \> 2.5 \> \# intrinsic resolution of 1st der. \> (native) \\
+RES\_DER2 \> 1.9 \> \# intrinsic resolution of 2nd der. \> (native) \\
+\\
+FSCALE\_DER1  \> 1.3 \> \# fobs scaling\index{scaling} factor, 1st der. \> none \\
+FSCALE\_DER2  \> 1.1 \> \# fobs scaling\index{scaling} factor, 2nd der. \> none \\
+AUTOSCALE  \> FALSE  \> \#  fine-tune fobs scaling\index{scaling}? \> TRUE \\     
+\end{tabbing} 
+\end{table}
+
+These input parameter are now briefly discussed; [m] stands for 1, 2, ..., 
+NDER:\index{keywords!NDER}
+
+$\bullet$ FO\_DER\_FN[m].\index{keywords!FO\_DER\_FN}  
+The name of the fobs file for the m-th derivative.
+(FN stands for ``filename'').
+
+$\bullet$ FC\_HEAVY\_FN[m].\index{keywords!FC\_HEAVY\_FN}
+The name of the file containing calculated 
+structure factors for the heavy atoms.  Note that this file contains 
+``hydrogen-like'' structure factors --- i.e. the value of Z is not used
+in their calculation.  The appropriate Z, together with $f^\prime$ and 
+$f^{\prime\prime}$ are applied within Solve.
+
+$\bullet$ Z[m].\index{keywords!Z}  The atomic number for the m-th 
+derivative (MAD data).  Nomally, if there are 2 sets of MAD data, $Z1 = Z2$.
+
+$\bullet$ FP\_FPP[m].\index{keywords!FP\_FPP}  
+Values of  $f^\prime$ and $f^{\prime\prime}$ for the m-th atom (MAD data).
+
+$\bullet$ RELWT\_NATIVE.\index{keywords!RELWT\_NATIVE}
+ This is the weight associated with the native data
+in the cost function.  If you do not have an observed data set for the native, 
+you should set {\it relwt\_native} to 0 and use any available (dummy) file name for 
+{\it fo\_filename}.
+
+$\bullet$ RELWT\_DER[m].\index{keywords!RELWT\_DER}
+ This is the weight associated with
+the m-th derivative data relative to the native in the cost function.  
+The default should be used in preliminary runs, but
+see also Section~\ref{mir-solve-preliminary}.
+
+$\bullet$ FSCALE\_DER[m].\index{keywords!FSCALE\_DER} 
+This is the factor for scaling\index{scaling} fobs data to 
+absolute scale for the m-th derivative.  
+
+$\bullet$ RES\_DER[m].\index{keywords!RES\_DER[m] }
+ This is the resolution of the m-th data set, insofar as it differs
+from the native resolution.
+
+$\bullet$ AUTOSCALE.\index{keywords!AUTOSCALE}
+It is our experience that the success of MIR or MAD runs is highly
+sensitive to the precise scaling of the fobs files among themselves.  
+Generally, it is useful to fine-tune this scaling between outer iterations 
+of the Solve process by enabling autoscaling.  The code then changes the
+relative scales of the derivatives such that the overall
+cost function is minimized.  The
+AUTOSCALE parameter allows you to by-pass this fine-tuning, if you wish.
+
+\vspace {0.1in}
+
+A particular new procedure in setting up an MIR or MAD run, 
+as compared with the single run discussed in Section~\ref{solver-preparation} 
+(with no MIR or MAD),
+lies in the scaling\index{scaling} of the various data sets among themselves.
+The complete process is thus (Figure~\ref{fig-mir}):
+
+$\bullet$ problem definition
+
+$\bullet$ resolution choice
+
+$\bullet$ structure factor apodization (all hkl files)
+
+$\bullet$ absolute and relative scaling\index{scaling}
+
+$\bullet$ consistent model preparation 
+
+$\bullet$ (optional) solvent target preparation 
+
+
+\begin{figure}
+
+\setlength{\unitlength}{1mm}
+\thicklines
+{\begin{picture}(155,190)
+% header
+
+\put(15,175){\mbox {STEP}}
+\put(60,175){\mbox {EDEN RUNS}}
+\put(105,175){\mbox {OUTCOME}}
+
+\put(0,140)
+{\begin{picture}(0,0)
+   \step { 1. Problem definition}
+   \runs    {12}{(none)}
+   \outcome {14}{cell, symmetry,}
+   \outcome {10}{mode}
+\end{picture}}
+
+\put(0,115)
+{\begin{picture}(0,0)
+   \step { 2. Resolution choice}
+   \runs    {12}{(none)}
+   \outcome {12}{resolution}
+\end{picture}}
+
+\put(0,90)
+{\begin{picture}(0,0)
+   \bigstep { 3. Apodization }
+   \morestep {10}{ Scalings }
+   \runs    {14}{Apodfc\index{Apodfc}}
+   \runs    {10}{Apodfo\index{Apodfo}}
+   \outcome {18}{fc\_filename(2),}
+   \outcome {14}{fc\_heavy[m](2)}
+   \outcome {10}{fo\_filename(2),}
+   \outcome { 6}{fo\_der[m](2)}
+   \outcome { 2}{fscale, fscale\_der[m]}
+\end{picture}}
+
+\put(0,65)
+{\begin{picture}(0,0)
+   \step { 4. Consistent models}
+   \runs    {12}{Back\index{Back}}
+   \outcome {14}{md\_filename,}
+   \outcome { 6}{fc\_heavy[m](3),}
+\end{picture}}
+
+\put(0,40)
+{\begin{picture}(0,0)
+   \bigstep { 5. Solvent target}
+   \morestep {10}{(optional)}
+   \runs    {16}{Apodfc\index{Apodfc}, low res}
+   \runs    {12}{Back\index{Back}}
+   \runs    { 8}{Maketar\index{Maketar}}
+   \outcome {14}{ta\_filename1,}
+   \outcome {10}{wt\_filename1, relwt\_con1}
+   \outcome {6} {(etc.)}
+\end{picture}}
+
+\end{picture}}
+
+\caption{\large Preparations for Solve with MIR or MAD}
+\label{fig-mir}  
+\end{figure}
+
+\subsection {Preparation of Native Fcalc File}
+\label{mir-preparation-native}
+
+In a preliminary Solve MIR or MAD run, it is obviously best to start with 
+some partial 
+knowledge of the native electron density, based on the output of PHASES
+or MLPHARE, for example, suitably manipulated to convert it to
+X-PLOR/CNS\index{X-PLOR}\index{CNS} format (see Section~\ref{files-standard}).
+Then the native fcalc file should be run through  Apodfc\index{Apodfc}.
+It must then be
+used to create a consistent model, as described for simple Solve runs,
+by running Back\index{Back} on it.
+If you have such a native electron density file, your Solve runs should be 
+done in correction mode.
+
+\vspace {0.1in}
+
+However, in your first Solve MIR or MAD run, the initial native structure
+factors may be unknown.  In this case, use the special pseudo-name ``empty'' 
+for the keywords FC\_FILENAME\index{keywords!FC\_FILENAME} 
+and MD\_FILENAME.\index{keywords!MD\_FILENAME}
+
+
+\subsection {Preparation of Heavy Atom Fcalc Files}
+\label{mir-preparation-heavy}
+
+Fcalc files must be set up to contain structure factors 
+corresponding to the heavy atoms, with appropriate occupancies.  
+It is essential that the heavy atom structure factors be on an absolute
+scale.  The program Phases, for example, does {\em not} scale 
+the heavy atoms on an absolute scale.
+In the absence of any other program from the
+standard crystallographic repertoire, preparation of the heavy atom 
+structure factors may be done using the Eden utility 
+Tohu\index{Tohu} (see Chapter~\ref{advanced}).  
+It is possible to process MAD anomalous data in 
+Tohu\index{Tohu} if you set keyword {\tt ANOM}\index{keywords!ANOM}  
+to TRUE.  
+In that case, Tohu\index{Tohu} will calculate and write out structure
+factors for ``hydrogen'' 
+atoms at the specified positions; further
+processing (using Z, $f^\prime$, and $f^{\prime\prime}$) 
+is relegated to Solve\index{Solve}.
+Note that although Tohu\index{Tohu} 
+assumes point-like atoms, it does use the heavy atom occupancies
+and B factors and it does put the output on an absolute scale.
+In all cases, the resulting fcalc file should be run
+through Apodfc\index{Apodfc} and inspected, to be sure that 
+the least squares fitting of the
+plot to a linear approximation and the resulting smearing factor
+is appropriate. Finally, it must be put through Back\index{Back} 
+to ensure a model gridded physical-space file for Solve.
+All of these preprocessors are discussed again in Chapter~\ref{preprocessors}.
+
+\subsection {Preparation of Derivative Fobs Files}
+\label{mir-preparation-derivative}
+
+Derivative fobs files may need to be apodized
+using Apodfo\index{Apodfo}, exactly as the native
+fobs file was.  Please remember that each file should contain an $F(0,0,0)$
+term whose value is your best estimate of
+the total number of electrons in the unit cell of the 
+MIR or MAD derivative data file, including both ordered and disordered solvent.
+
+In principle, you can find the scale factor, {\it fscale\_der[m]}, 
+for scaling\index{scaling} fobs to an absolute scale
+in the same way that you find {\it fscale} for the native.  
+However, it is more accurate to find a relative scale factor 
+{\it rel\_fscale[m]} for the derivative with respect to the native.  Then
+
+$$ fscale\_der[m] = rel\_fscale[m] * fscale $$
+
+The value for $rel\_fscale[m]$ may be derived from the two intercepts
+reported for Apodfo\index{Apodfo} when it is run using the native {\it fo\_filename}
+and when it is run using the derivative {\it fo\_der[m]}.  
+If the reported intercepts are
+$y_{0,nat}$ and $y_{0,der}$ respectively, the required value is
+
+$$ rel\_fscale[m] = exp[(y_{0,der} - y_{0,nat}) / 2]$$
+
+Since the intercepts are determined by extrapolating the linear approximation
+to the plots, they are also prone to error.  Thus,
+although you may use this formula for estimating $rel\_fscale[m]$, 
+it is safer and more accurate to work graphically.  
+Let us assume that you wish to scale 
+{\tt Hgder.obs} to {\tt nat.obs}.  
+Running Apodfo\index{Apodfo} on each of these files will give for each a 
+Wilson\index{Wilson} plot;
+after you have chosen the \delfo that is
+the best fit, Apodfo\index{Apodfo} will write out files {\tt nat.obs\_wil} and
+{\tt Hgder.obs\_wil}.
+Now plot these two and look for a (positive or negative) constant, 
+$y_{diff}$ that, when added to {\tt Hgder.obs\_wil} 
+will best bring it into coincidence with {\tt nat.obs\_wil}.
+Then use
+
+$$ fscale = exp[y_{diff} / 2] $$
+
+for scaling\index{scaling}.  In this way, the most reliable mid-resolution data
+can be used for scaling\index{scaling}.  If -- as is usually the case -- the derivative
+has a lower resolution than the native, you should apodize the native to the intrinsic
+resolution of the derivative (reported by Apodfo) for purposes of scaling.
+
+\section {Running Solve with MIR or MAD}
+\label{mir-solve}
+
+\subsection {Scaling Issues for MIR}
+\label{mir-solve-scaling}
+
+Let N refer to the native and D to a typical derivative; for purposes
+of this discussion, we will consider the m-th derivative.  Several
+parameters govern the behavior of the MIR solution process, the most
+important ones being:  the scaling\index{scaling} of fobs to fcalc data for the native,
+$fscale_N$; the comparable scaling\index{scaling} of fobs to fcalc data for the
+derivative, $fscale\_der[m]$, which we refer to as $fscale_D$; 
+and the occupancy of the heavy atom sites in the
+derivative, $Occ_D$.  Another parameter in the cost function calculation 
+is the weight associated with the cost function for the native, 
+relative to the cost function for the derivative.  When the fobs data 
+have $\sigma$ values, the relative weights of individual reflections
+are set automatically on their basis;
+otherwise, they are all set to be 1.
+Finally, the total number of electrons in the native
+and derivative molecules (including solvent) plays a role, but it is
+assumed that these numbers are well enough known.
+
+\vspace {0.1in}
+
+Let $\rho_N$ be the electron density of the native and $\rho_H$ be the
+electron density of the heavy atoms in the derivative.  The fundamental
+assumption is that the total electron density in the derivative, $\rho_D$, is
+
+$$  \rho_D = \rho_N + Occ_H*\rho_H $$
+
+We shall write F($\rho_N$) for $\|Fcalc_N\|$ and 
+F($\rho_N + Occ_H*\rho_H$) for $\|Fcalc_D\|$.  
+Then the
+conjugate gradient process seeks to minimize the sum of the squares of
+two terms --- $term_N$ and $term_D$,  where:
+
+$$  term_N = F(\rho_N) - fscale_N * Fobs_N $$
+
+$$  term_D = F(\rho_N + Occ_H*\rho_H) - fscale_D * Fobs_D $$
+
+If the scalings $fscale_N$ and $fscale_D$ are correct, 
+but the occupancy $Occ_H$ of $\rho_H$
+is too low, the code will push some of the heavy atom contributions
+from $\rho_H$ to $\rho_N$, decreasing $term_D$ and increasing $term_N$ in the
+process --- i.e., the heavy atoms will ``show through'' in the resulting
+native electron density.  Conversely, if the scalings are correct
+but the occupancy of $\rho_H$ is too high, the code will cause the
+resulting native electron density to have holes at the positions of the
+heavy atoms.
+If the occupancies are correct but $fscale_D$ is too high with respect 
+to $fscale_N$,
+the code will again add density corresponding to heavy atoms to $\rho_N$ in
+the effort to minimize $term_D$.  Again, this will cause $term_N$ to rise, but
+presumably the lowering of $term_D$ will more than compensate for it.
+
+\vspace {0.1in}
+
+In summary, an MIR run that produces a native electron density with
+the heavy atoms showing through may be the consequence of either of two
+errors:  too low occupancy of the heavy atoms in the derivative, or too
+high a scaling\index{scaling} factor, $fscale_D$.  Our experience has been that
+the latter error is more likely, since occupancies of 1 are common
+and occupancies cannot exceed 1.
+
+\subsection {Preliminary Runs}
+\label{mir-solve-preliminary}
+
+Based on the ideas that were just discussed, we recommend that 
+you start off the MIR runs at a relatively low resolution 
+(say, 3~\AA ngstom), without a solvent target.  
+This will allow you to do a number of runs fairly rapidly.
+In order to decide whether the occupancies
+and scaling\index{scaling} are well tuned, you will need a display program 
+that allows you to examine two-dimensional slices of the binary
+data produced by Solve.  
+We are delighted to inform our readers that the latest version of PyMOL
+(experimental version 0.98) is capable of letting
+you examine slices in a {\em quantitative} fashion 
+and, for example, enabling you to pinpoint 
+unusually high or low densities at well-defined positions.
+
+\vspace {0.1in}
+
+For Solve runs in general, we recommend that you use the {\tt -v} 
+option; this will produce a listing of the cost function components.
+A careful study of the sizes of the native and derivative cost functions
+will indicate the degree to which the derivative data sets are reliable.
+If you find that a certain derivative seems to give consistently high
+cost function values, compared to the native and other derivatives, 
+you may want to suppress its contribution by selecting a low value for 
+$relwt\_{der}[m]$ or even by omitting the derivative entirely.
+
+Once the data are pronounced well-scaled and the occupancies are correct,
+you are ready for a high-resolution run.  The only change in the preparation
+steps is that the starting model, that was previously either an empty file
+or the output of Mlphare, for example, may now be replaced by the best
+result from your preliminary runs.  Be sure that {\em all} the 
+preparation steps, including all the apodization runs, are redone at the
+new {\it resolution}. 
+
+\subsection {Isomorphism Checks}
+\label{mir-solve-isomorphism}
+
+The result of the high-resolution MIR run may be regarded as an
+approximation to the native crystal, possibly warped in the region of 
+the heavy atoms where the native and derivatives did not display complete
+isomorphism.  Thus, 
+you may wish to explore the native and derivative crystal structures 
+separately.  This section deals with our (limited) experience in this regard.
+See also Section~\ref{constraints-targets}.
+
+\vspace {0.1in}
+
+Consider an MIR run identified by its input file, say {\tt abc.inp}.
+We would like to remove the bias in its outputs that arose
+as a result of the ``not-so-isomorphous'' replacement.
+We take the native output file of the MIR run, {\tt abc.bin}
+and use it as input to a second, ordinary (non-MIR) Solve run.  
+However, in order to make sure that the Solve solution does not stray too far
+from our previous results, we {\em also} use the binary file as a target!  
+(The accompanying WT\_FILENAME should have the value {\tt full}.)
+We have found that a {\em very}
+low value of the relative weight such as $3*10^{-3}$, 
+is sufficient to keep Eden from straying too far
+from its starting point, while still allowing the solver to correct errors
+from the original MIR run.
+
+\vspace {0.1in}
+
+We then
+do similar runs for the derivatives, but now, we will need to do a couple of
+extra steps.  First, we prepare a structure factor file corresponding to the 
+native result of the MIR/MAD run, by running Forth on {\tt abc.bin}.
+Then add to it the original structure factor file for a selected (m-th)
+derivative.  For this you will need a little utility, 
+Cadhkl\index{Cadhkl} described in Chapter~\ref{advanced-other}.  
+Then, run Back\index{Back} to prepare a consistent physical-space model.  
+Now, from this starting point, run ``ordinary'' Solve as described above for 
+the native.
+If you subtract {\tt abc.bin} from the output of this new Solve run, you will 
+find the correct positions and shapes of the heavy atoms, as well as the
+distortions of the protein caused by those heavy atoms.  You can run Forth on
+this difference and use the result as an improved {fc\_heavy[m].
+A 2nd full MIR run using all the (hopefully) improved starting points shold 
+give a better-defined electron density for the native.
+
+\index{MAD|)}
+\index{MIR|)}
+
+\chapter {Physical Space Constraints}
+\label{constraints}
+
+\section {Overview}
+\label{constraints-overview}
+
+As described in Section~{\ref{solver-running}}, the search for an optimal set of electrons per voxel
+is conducted in physical space.  The cost function value has both Fourier-space
+components, of which the difference between observed and calculated structure factors
+is the principal component, and physical-space components.  It is the sum total of all
+the components of the cost function that is used to guide the conjugate gradient solver in 
+its search for a minimum.  At this point, we will
+discuss the physical-space components.
+
+There are various kinds of physical-space ($N_p$) constraints\footnote
+{The term {\em restraints} would, in fact, be more suitable
+for our cost functions, since they do not absolutely constrain the solver 
+but instead, ``encourage'' it to a greater or lesser degree.}
+in Eden's Solve program that may be applied, together with the $N_{hkl}$
+space constraints, at each inner iteration of the optimization process.  
+One of these, target constraints, may be 
+considered quite general in application.  All the others are more specialized;
+they may be appropriate only within a limited resolution range, for example.
+A comprehensive discussion of spatial constraints is to be found in \cite{eden7}.
+
+\vspace {0.1in}
+
+By default, there are no physical-space constraints: $nconstraints = 0$.
+The value of NCONSTRAINTS\index{keywords!NCONSTRAINTS}
+ is limited to a maximum of 12.  In fact, it seems unlikely
+that more than 2 -- 3 would be useful when applied simultaneously.
+All constraints require two input keyword-value pairs --- CON\_TYPE[n], which
+identifies the kind of constraint, and RELWT\_CON[n], 
+which identifies the relative weight to be associated with that constraint,
+where [n] stands for a number of range $(1, nconstraints)$.
+There are other inputs that are specific to the constraint type; they will be
+introduced individually in the following sections of this chapter.
+Legal values for $con\_type[n]$ are: \footnote{The distinctions among 
+{\tt target}, {\tt solvent\_tar} and {\tt stabilize\_tar} are for reporting
+purposes only; the Solve code does not actually distinguish one from another.}
+
+\vspace {0.1in}
+
+\qq {\tt target} for a solvent or protein target.
+
+\qq {\tt solvent\_tar} for a solvent target.
+
+\qq {\tt stabilize\_tar} for a protein target.
+
+\qq {\tt phase\_ext} for Eden's version of phase extension,
+
+\qq {\tt cs} for crystal symmetry.
+
+% \qq {\tt sayre} for a high resolution (atomicity) term, and
+% 
+
+\vspace {0.1in}
+
+Values of relative weights are typically in range $10^{-3} - 1$.
+See also Section~\ref{constraints-relwt}.
+
+\vspace {0.1in}
+
+Each type of physical-space constraint will now be discussed.
+
+\section {Targets}
+\label{constraints-targets}
+
+Target constraints require the kind of input described in 
+Table~\ref{table-target} --- i.e., in addition to the standard input (for all
+physical-space constraints), they require the names of two sets of
+files in physical space.  One, $ta\_filename[n]$, contains the electron/voxel
+values that will be used as targets; 
+the other, $wt\_filename[n]$, contains the weights
+associated with these values.  Weights may be in range (0,1),
+but generally they are either 0 or 1.  There is a special 
+pseudo-name --- ``full'' --- that may be used with keyword WT\_FILENAME,
+\index{keywords!WT\_FILENAME}
+signifying that all electron/voxel values are to be given a
+weight of 1.
+
+\begin{table} [htb]
+\caption {\large Target Constraint Input for Solve}
+\label{table-target}
+
+\begin{tabbing}
+XXXXXXXXXXXXX \= nnnnnnnnnnnnnnnnnnnnnn \= 
+blahblahblahblahblahblahblahblah\= none \kill
+
+Keyword \> Example of value \> description \> default \\
+\\ 
+NCONSTRAINTS \> 1 \> \# no. of target constraints \> 0 \\
+CON\_TYPE1 \> target \> \# description of 1st constraint \> none \\
+RELWT\_CON1 \> 0.1 \> \# rel. wt. for 1st constraint \> 0 \\
+TA\_FILENAME1 \> mytarget \> \# name of 1st Np space target \> none \\
+WT\_FILENAME1 \> myweight \> \# name of 1st Np space weight\> none \\
+\\
+\end{tabbing} 
+\end{table}
+
+Target constraints are applied in Eden's Solve in the following 
+form (\cite{eden7}):
+
+$$ f_{target} = Relwt * Const * \sum_{p=1}^{N_p} 
+            wt_p^2 (n_p - n_{p,targ})^2 $$
+
+where $n_p$ is the current electron/voxel value at a point $p$, $n_{p,targ}$
+is the targetted electron/voxel value at that point, 
+and $wt_p$ is the weight associated with the target at that point.
+Note that wherever the weight is zero, the density is {\em not} constrained -- 
+i.e., it is free to change.  The value of Const is proportional to the fraction
+of total points that are targetted by the weight file.
+
+\vspace {0.1in}
+
+Currently, target constraints may be applied in three scenarios: 
+(a) for enforcing a well-established partial model; 
+(b) for a stabilizing target; and (c) for a solvent target.
+
+\vspace {0.1in}
+
+(a) If you have a good partial model, the weight
+array should cover the partial model alone (i.e., it should differ from 0 only
+where the current model is significantly greater than 0).  A high relative
+weight ($0.1 - 1.$) is appropriate.  
+Note that a partial model target is potentially a stronger constraint
+than the basic ``completion'' mode of operation of Solve: when the partial 
+model is regarded as a {\em target}, its value will be maintained more or less
+unchanged --- electrons will be neither added to it nor subtracted from it --- 
+but when Solve operates in completion mode without a target, 
+electrons may be freely added to the partial model.  
+
+\vspace {0.1in}
+
+(b) A stabilizing target is similar to a completion mode target, except that 
+the model should be essentially complete.  A weight array containing 
+all 1's and a low relative weight are appropriate.  
+A stabilizing target is useful in
+almost any run; its purpose is to keep Eden from straying unnecessarily from
+the starting model. Note that if there is too much freedom, i.e., not enough data,
+Eden is free to put ``garbage'' anywhere -- and it will.A stabilizing target
+ensures that the phase changes introduced by Eden are 
+the smallest compatible with the information supplied 
+(such as the diffraction pattern, positivity, derivative information and
+solvent regions).  Insofar as there is no such information, Eden recovers a
+difference Fourier map.
+
+\vspace {0.1in}
+
+(c) Solvent targets are probably the commonest form of constraint used
+in Eden.  Our experience is that solvent targets are especially helpful for 
+extending the scope of Eden's power to solve protein structures
+(see \cite{eden5}).  
+
+\vspace {0.1in}
+
+Eden's Maketar\index{Maketar} was designed for preparing the weight files 
+needed for all target constraints.  See Section~\ref{preprocessors-maketar}.
+For a protein target, you should run Maketar\index{Maketar}, setting 
+TARGET\index{keywords!TARGET} to ``high'';
+in this way, the targetted points will 
+cover the protein rather than the solvent area.  The $mask\_fraction$ 
+or $threshold$ input allows you to fine-tune the fractional level 
+at which weighting kicks in.
+For a solvent target, the target array
+should contain a value of about 0.34 el/cubic \AA ngstrom (converted to units
+of electrons/voxel) and the weight array should cover whatever region 
+is established to be the solvent,
+using X-PLOR/CNS\index{X-PLOR}\index{CNS}, for example, followed by Eden's 
+Back\index{Back}.  Watch out with this procedure! 
+X-PLOR/CNS\index{X-PLOR}\index{CNS} prepares the solvent region
+with a positive value, the non-solvent region with value 0, 
+so from the viewpoint of Maketar\index{Maketar}, 
+this is a {\em ``high''} target.
+
+\vspace {0.1in}
+
+An alternate (safer) way to prepare a solvent target is to run 
+Apodfc\index{Apodfc} with a very low resolution (high value of input 
+APOD\_RES\index{keywords!APOD\_RES}) to prepare
+a smeared-out version of the known model; then run Back\index{Back} at the 
+regular resolution; and finally, run Maketar\index{Maketar} setting 
+TARGET\index{keywords!TARGET} to ``low'', thus targetting the solvent.  
+You may have to experiment to find a 
+relative weight that is large enough to be effective, but not so large that
+the edges of the solvent region are clearly visible in a false-color
+rendition of the final output.
+For determining the relative weight, you should examine the cost function 
+report.  Typically, at least in the first outer iteration, the target 
+contribution should be relatively small; later, it should
+approach the hkl contribution or even surpass it, but not by orders of
+magnitude.
+
+\section {Phase extension}
+\label{phase_ext}
+
+The input for a phase extension constraint includes the same information
+as for target constraints, as well as a phase extension resolution.  See
+Table~\ref{table-phext}.
+Let us imagine that a credible .fcalc model of the problem 
+at a resolution of 6 \AA ngstrom has been established.  Call it
+prot6.hkl.  We may use this solution as the 
+FC\_FILENAME\index{keywords!FC\_FILENAME} and extend our 
+knowledge of the protein details to higher resolution --- say, 
+2.5 \AA ngstrom --- in the following manner.  
+We run Back\index{Back} using resolution = 2.5, to obtain a 
+real-space counterpart for prot6.hkl, but at a grid spacing that is compatible
+with the intended (higher-resolution) run.  This model (call it prot6m) will 
+serve {\em both} as MD\_FILENAME \index{keywords!MD\_FILENAME}
+{\em and} as TA\_FILENAME. \index{keywords!TA\_FILENAME} 
+This is a case where the appropriate WT\_FILENAME\index{keywords!WT\_FILENAME}
+may be ``full'' (i.e., all points will be assigned a weight of 1.0, without
+any need for preparing a special bin file).
+
+We will thus have the special input for phase extension as shown in 
+Table~\ref{table-phext}.
+
+\begin{table} [htb]
+\caption {\large Phase Extension Constraint Input for Solve}
+\label{table-phext}
+
+\begin{tabbing}
+XXXXXXXXXXXXX \= nnnnnnnnnnnnnnnnnnnnnn \= 
+blahblahblahblahblahblahblahblah\= none \kill
+
+Keyword \> Example of value \> description \> default \\
+\\
+NCONSTRAINTS \> 1 \> \# Number of constraints \> 0 \\
+CON\_TYPE1 \> phase\_ext \> \# Description of constraint \> none \\
+RELWT\_CON1 \> 1.e-4 \> \# relative weight  \> 0 \\
+PHASE\_EXT\_RES \> 6 \> \# inherent resolution of target \> none \\
+TA\_FILENAME1 \> prot6m \> \# target file name \> none \\
+WT\_FILENAME1 \> full \> \# weight (pseudo) file name \> none \\
+\end{tabbing} 
+\end{table}
+\index{keywords!PHASE\_EXT\_RES}
+
+The application of phase extension uses a cost function that is applied in 
+reciprocal space (see \cite{eden7}).  Note that a phase extension constraint 
+should always be applied in correction mode.
+Note too that if your low-resolution model is only partial, you can make a
+real weight file, as discussed previously.
+
+% \section {Atomicity (Sayre's equation)}
+% \label{constraints-sayre}
+% 
+% A cost function that encourages atomicity in the electron/voxel data is
+% described in \cite{eden7}.  It is shown there that the cost 
+% is proportional to a sum over contributions at each point in the unit cell:
+% 
+% $$ f_{sayre} = - Relwt * Const * \sum_{p=1}^{N_p} \sum_{p'=1}^{N_p}
+%             (n_p - \overline{n})(n_{p'} - \overline{n})
+%             exp[-(r_p-r_{p'})^2 / (2\eta\Delta r^2)] $$
+% 
+% where $p$ is a gridded point (of which there are $N_p$), 
+% $p'$ is another point in the close vicinity of $p$, 
+% $n_p$ and $n_{p'}$ stand for the electron/voxel values at $p$ and $p'$, 
+% $\overline{n}$ is the unit cell average of $n_p$,
+% $r_p$ and $r_{p'}$ are coordinates of $p$ and $p'$, and 
+% $\Delta r$ is the mean grid spacing.
+% To this sum, Solve adds a term representing the optimal (maximal) 
+% atomicity, that you must calculate and input as a $cost\_addend[n]$ value:
+% 
+% $$ cost\_addend[n] = \sum_{Z=1}^{N_{spec}} {N_Z * Z^2} +  N_s * d_s^2   $$
+% 
+% where $N_{spec}$ is the number of distinct species $Z$ (electrons per atom); 
+% $N_Z$ is the number of atoms of type $Z$ in the unit cell; $N_s$ stands for
+% the number of grid points in the solvent region ($\approx 1/2 N_p$); 
+% and $d_s$ is the solvent density in electrons/voxel.
+% 
+% \vspace {0.1in}
+% 
+% By precalculating the offsets from a given point to its close vicinity
+% and precalculating the exponential factors for each term, 
+% the Sayre cost function can be rapidly determined in the optimization process.
+% Once again, we have little experience for judging the usefulness of this
+% cost function.
+% 
+\section {Crystal Symmetry}
+\label{constraints-cs}
+
+There is no special input for imposing the crystal symmetry constraint at
+each step in the optimization process, other than specification of 
+CON\_TYPE[c] and RELWT\_CON[c], where [c] stands for the index of the 
+crystal symmetry constraint.  Our experience is that there is
+little to be gained from application of this cost term.
+
+\section {Choice of Relative Weights}
+\label{constraints-relwt}
+
+The value of the relative weight represents the weight
+of the $n$-th physical-space cost function relative to the $(hkl)$ space
+cost function.   As stated previously, the proper value of the relative weight 
+can be anywhere in 
+range $10^{-3} - 1$.  In the absence of MIR\index{MIR} or MAD,\index{MAD} 
+the $(hkl)$ space relative weight is 1.
+Otherwise, it will be greater by approximately the number of derivatives.
+In order to get a handle on the useful relative 
+weight for a typical physical-space constraint,
+you should run Solve with the {\tt -v} option
+\footnote{In fact, we recommend {\it always} running Solve with the {\tt -v}
+option} and examine the
+{\tt .cost} file.  Assume a single $N_{hkl}$ cost and a single $N_p$ space cost.
+If from the start, the physical-space cost outweighs or is 
+comparable with the $N_{hkl}$ space
+cost, the relative weight is too large.  Our experience is that
+in the first outer iteration, the $N_{hkl}$ term should dominate, while in the 
+2nd outer iteration (where Solve\index{Solve} generally works hardest), the two spaces
+should contribute comparable amounts.
+
+%\index{Solve|)}
+
+\chapter {Reciprocal Space Constraints}
+\label{RSconstraints}
+
+\section {Overview}
+\label{RSconstraints-overview}
+
+There are currently two forms of reciprocal-space constraints in Eden.
+One is for singlet and triplet invariants, which may be incorporated in the
+cost function calculations most effectively.
+The other is a detwinning algorithm which may be applied in two
+modes -- either amplitude or intensity detwinning (with input fraction).
+Currently, these constraints are applicable for a native data set only --
+i.e., they may not be combined with MAD or MIR.
+
+\section {Singlet and Triplet Constraints}
+\label{RSconstraints-ST}
+
+Knowledge about singlet and triplet phases is obviously useful to Eden.  
+The singlet reflections are the origin-determining reflections and the
+semi-invariants consistent with them.  The triplets are triplet invariants.
+The knowledge is not applied blindly, since it
+generally comes with some error allowance.  Instead, at each point in the
+generation of consistent phases, the singlet and/or triplet invariants is
+used with its error allowance and with an input weighting coefficient to
+give two new costs, which are added into the general cost function.
+
+%%% Based on our experience with Edgar Weckert in 1999,
+The singlet invariants come in a file (identified by name {\it sfile}
+in Table~\ref{table-ST}, with no added suffix) and is expected to contain
+5 space-delimited numerical fields:
+
+$$     h~k~l~phase~sigma $$
+
+The triplet invariants come in a file (identified by name {\it tfile}
+in Table~\ref{table-ST}, with no added suffix) and is expected to contain
+11 space-delimited numerical fields:
+
+$$     h1~k1~l1~h2~k2~l2~h3~k3~l3~phase~sigma $$
+where
+$$ \sum_{i=1}^{3}h_i = \sum_{i=1}^{3}k_i = \sum_{i=1}^{3}l_i = 0 $$
+
+Eden uses this information as a soft restraint at each step of the cost
+function minimization algorithm.
+
+\begin{table} [htb]
+\caption {\large Singlet and Triplet Invariant Input for Solve}
+\label{table-ST}
+
+\begin{tabbing}
+XXXXXXXXXXXXX \= nnnnnnnnnnnnnnnnnnnnnn \= 
+blahblahblahblahblahblahblahblah\= none \kill
+
+Keyword \> Example of value \> description \> default \\
+\\
+NCONSTRAINTS \> 2 \> \# Number of constraints \> 0 \\
+CON\_TYPE1 \> singlet \> \# Description of constraint \> none \\
+RELWT\_CON1 \> 1000. \> \# Singlet relative weight  \> 0 \\
+TA\_FILENAME1 \> sfile \> \# Singlet target file name \> none \\
+CON\_TYPE2 \> triplet \> \# Description of constraint \> none \\
+RELWT\_CON2 \> 30. \> \# Triplet relative weight  \> 0 \\
+TA\_FILENAME2 \> tfile \> \# Triplet target file name \> none \\
+\end{tabbing} 
+\end{table}
+
+\section {Detwinning}
+\index{Detwinning}
+\label{Detwinning}
+
+When a crystal is merohedrally twinned, there are other programs that can deal 
+with intensity
+twinning which may or may not be entirely successful.  The possibility
+of amplitude twinning is not handled in any conventional crystallographic
+package, to the best of our knowledge.
+Therefore, we have introduced a detwinning package to deal with both sorts of
+twinned crystal.  This should be looked upon as a reciprocal-space constraint,
+even though the input follows a different scheme from the usual pattern
+(target filename, relative weight, etc.)  See Table~\ref{table-detwin}.
+
+\begin{table} [htb]
+\caption {\large Detwinning Input for Solve}
+\label{table-detwin}
+
+\begin{tabbing}
+XXXXXXXXXXXXX \= nnnnnnnnnnnnnnnnnnnnnn \= 
+blahblahblahblahblahblahblahblah\= none \kill
+
+Keyword \> Example of value \> description \> default \\
+\\
+DETWIN \> TRUE \> switch to activate detwinning \> FALSE\\
+T\_TYPE \> I \> `I' (intensity) or `A' (amplitude) \> none \\
+T\_MATRIX \> 1 0 0 -1 -1 0 0 0 -1 \> twinning matrix \> none\\
+T\_FRAC \> 0.2 \> twinning fraction (range: 0 - 0.5) \> none\\
+\end{tabbing} 
+\end{table}
+
+$\bullet$ DETWIN.\index{keywords!DETWIN}
+A switch that you may set to TRUE if you believe that
+the data are twinned to some degree.
+Only if DETWIN is TRUE will the following 3 keywords be read.
+
+$\bullet$ T\_TYPE.\index{keywords!T\_TYPE}
+A character (A or I) indicating whether the twinning was amplitude or
+intensity;  Eden has different algorithms for the two cases.
+
+$\bullet$ T\_MATRIX.\index{keywords!T\_MATRIX}
+The 3-by-3 matrix transforming the reflection index to the index of its twin.  
+
+$\bullet$ T\_FRAC.\index{keywords!T\_FRAC}
+The fractional extent of twinning.
+
+\chapter {Preprocessing Utilities}
+\label{preprocessors}
+
+Up to this point in the manual,
+there have been many references to the preprocessing utilities that are needed
+for setting up Solve\index{Solve} runs.
+We now discuss each preprocessor in detail.
+
+\section {Apodfc and Apodfo}
+\label{preprocessors-apod}
+\index{Apodfc|(}
+\index{Apodfo|(}
+
+Apodization is the technical name for changing the crystallographic B-factor 
+in order to smear out the electron density.  This is required so that it may be 
+represented with fidelity in terms of Gaussian blobs on a grid.
+The two apodization programs, Apodfo and Apodfc, carry
+out an analysis of the structure factor data 
+that is similar to a Wilson\index{Wilson} plot.  They are used for
+determining the scale factor that places the fobs on an absolute scale
+($fscale$), as well as smearing factors for the fobs and fcalc 
+(\delfo and \delfc).
+The smearing factors are used to adjust the resolution of your data
+to the intrinsic resolution of the Eden solver.
+
+\vspace {0.1in}
+
+Apodfo reads structure factors from an input fobs file, while
+Apodfc reads structure factors from an input fcalc file. 
+{\it Please note that the fobs information should be entered
+in terms of amplitudes
+and amplitude sigmas, }{\bf NOT } {\it intensities and intensity sigmas!}
+Each utility generates a set of data points that are 
+mean values of $\ln(\|F\|^2)$ within shells (``bins'') 
+of $1/d^2$, where F stands for F$_{obs}$ or F$_{calc}$ and 
+
+$$ 1/d^2 = (h^2/a^2) + (k^2/b^2) + (l^2/c^2) $$
+
+or its general form for non-orthogonal crystals \cite{glusker}:
+
+$$ 1/d^2 = ((1 - \cos^2\alpha)(h^2/a^2) + 
+            (1 - \cos^2\beta)(k^2/b^2) + 
+            (1 - \cos^2\gamma)(l^2/c^2) + $$
+$$          2(cos\beta cos\gamma- cos\alpha)(kl/bc) +
+            2(cos\gamma cos\alpha- cos\beta)(lh/ca) +
+            2(cos\alpha cos\beta- cos\gamma)(hk/ab)) / $$
+$$       (1 - cos^2\alpha - cos^2\beta - cos^2\gamma + 2cos\alpha cos\beta cos\gamma) $$
+
+Given an input resolution,
+each utility then finds the slope of that set of data points, 
+using appropriate resolution limits and uncertainties (see below).  
+The slope is equivalent to a global crystallographic B factor.
+Each one reports that B factor and the y-intercept 
+($y_{0,obs}$ or $y_{0,calc}$) of the
+linearly-fit data, to be used for scaling\index{scaling} the experimental data.
+Insofar as the smearing factor is greater than zero, the apodized version
+of the input structure factors is written out.
+In fact, there are 2 resolutions that participate in the apodization: 
+$resolution$ -- the usual variable -- is used for either accepting or discarding
+input structure factors; $apod\_res$ is a variable unique to these utilities;
+it determines how strongly the program will apodize.  
+By default, $apod\_res = resolution$, but you may choose a larger
+value if you wish to smear the information more strongly (e.g., for 
+preparing a solvent target).
+
+\vspace {0.1in}
+
+Apodfc and Apodfo then find the slope of that (very roughly) linear function.
+They use two methods for deriving the slope: one is a straightforward least-squares
+ minimization; the other more sophisticated method uses a ``universal'' 
+correction factor \cite{cowtan} that suppresses much of the non-linearity
+specific for globular proteins.  The non-linearity comes from their
+solvent content that decreases the density contrast at low resolution.
+If you run Apodfc and Apodfo with the {\tt -g} flag,
+graphs using both methods are presented for your inspection (under Xmgr) and 
+we also print out our recommendation in the terminal report -- but you may make
+your own choice.
+If you run them without the {\tt -g} flag, Eden decides which method to use, 
+based on minimizing the standard deviation of the linear data with respect to 
+the original data.
+
+Run Apodfc by typing:
+
+\qq {\tt eden [-gv] apodfc } {\it name} {\it sfname}
+
+where 
+{\it name}{\tt .inp} is the input parameter file without extension {\tt .inp},
+{\it sfname} is a structure factor file name typed in its entirety,
+
+\qq optional {\tt -g} (graphics) invokes 
+{\tt xmgrace} and displays plots of the
+mean values of $\ln(\|F\|^2)$ as a function of $1/d^2$.  There are 4 such plots 
+--- the original binned data; the best linear fit to that original data;
+data corrected using a universal correction for protein non-linearity;
+and the linear best fit through the corrected data.  The use of the {\tt -g}
+option is highly recommended.  However, if you do not have {\tt xmgrace} on your
+system (and thus do not invoke this option), the files that are used for the
+simple $x-y$ plots will be written out and are thus available for you to inspect
+with some other plotting program.
+
+\qq optional {\tt -v} (verbose) produces a number of extra files that are
+unlikely to be of interest to the casual user.
+
+Similarly, run Apodfo by typing:
+
+\qq {\tt eden [-gv] apodfo } {\it name} {\it sfname}
+
+where 
+{\it name}{\tt .inp} is the input parameter file without extension {\tt .inp},
+{\it sfname} is an fobs file name typed in its entirety,
+
+Apodfc and Apodfo both expect to find an input parameter file, 
+{\tt {\it name}.inp}, 
+containing run conditions and parameters, entered as upper- or lower-case 
+keywords\index{keywords} (first column) followed by values (second column).   Use a ``generic''
+input file (see Table~\ref{table-basic}) plus optional information from 
+Table~\ref{table-apod}.
+
+\begin{table} [htb]
+\caption {\large Optional Input for Apodfc and Apodfo}
+\label{table-apod}
+
+\begin{tabbing}
+XXXXXXXXXXXXX \= nnnnnnnnnnnnnnnnnnnnnn \= 
+blahblahblahblahblahblahblahblah\= none \kill
+
+Keyword \> Example of value \> description \> default \\
+\\
+BINWIDTH \> 0.004\>  \#  width of intensities shells \> 0.002 1/\AA$^2$ \\
+MIN\_RES \> 4.0 \>  \#  minimum resolution \> 3.5 \AA \\
+MAX\_RES \> 1.9 \> \#  maximum resolution \> 0.05 \AA \\
+APOD\_RES \> 6.0 \> \#  apodization resolution \> $resolution$ \\
+\\
+\> (and for Apodfo only) \\
+\\
+USESIG \> FALSE \> \# switch to use fobs SIGMA \> TRUE \\
+
+\end{tabbing} 
+\end{table}
+\index{keywords!APOD\_RES}
+
+Usually, there is no need to use non-default values for 
+BINWIDTH,\index{keywords!BINWIDTH} MAX\_RES\index{keywords!MAX\_RES}
+ or MIN\_RES\index{keywords!MIN\_RES} --- but see below.
+
+\vspace {0.1in}
+
+The weighted linear fit is calculated over a subset of $1/d^2$ space, 
+corresponding to the available extent of $(h k l)$ in the input 
+(fcalc or fobs) file and limited by the range ($min\_res$, $max\_res$).
+Weighting is determined by the number of reflections in each bin and 
+(for fobs apodization) by their sigma values.
+If the -g flag is in effect, the mean values of $\ln(\|F\|^2)$ within each shell
+vs. $1/d^2$ and a linear fit to those
+values are written to text files {\tt wil} and {\tt lin\_wil}, respectively, 
+for inspection with the plotting program {\tt xmgrace}.
+Adjusted versions of the two files that correct for the universal shape
+are also written and displayed as {\tt wil\_w0corr} and {\tt lin\_wil\_w0corr}. 
+We recommend that you study the plots to be sure that the fit is good.  
+If not, for example if the linearized plot extends to too low 
+values of $1/d^2$, you may
+want to enter an adjusted (lower) value for keyword 
+MIN\_RES.\index{keywords!MIN\_RES}
+
+After you have chosen the smearing factor, the selected Wilson\index{Wilson} 
+plot will be written to {\it sfname\_}{\tt wil}.  
+(While MAX\_RES\index{keywords!MAX\_RES}
+ is also available for changing the upper limit of $1/d^2$, 
+we have seldom found a need to fiddle with it.)
+Please note: changes in MIN\_RES\index{keywords!MIN\_RES}
+ or MAX\_RES\index{keywords!MAX\_RES}
+ have to do with 
+the limits on the x-axis over which linearization will be applied.  Do {\em not}
+change INPUT\_RES\index{keywords!INPUT\_RES}  to be ``consistent'' 
+with them! --- INPUT\_RES affects the calculation of \delfo or \delfc 
+critically.  If either apodization utility
+reports an error: ``Trouble! - empty bin(s) ...'', 
+followed by a list of bin occupancies and values of $||F||^2$,
+you should increase the value of BINWIDTH\index{keywords!BINWIDTH} 
+judiciously from the nominal value of 0.002 to $n*0.002$, where n is an integer.
+
+\vspace {0.1in}
+
+Normally, the codes will write apodized structure factors 
+to a file whose name is derived from the input structure factor file, 
+by adding {\tt \_apo} before the file extension.  
+However, sometimes Apodfc or Apodfo will report a negative smearing factor.
+That means that your data has a lower intrinsic resolution (higher B value)
+than the solver can provide.  This is not a problem; 
+Apodfo and Apodfc will not write out apodized files.  You should use the
+input (``unapodized'') files for all further processing.   
+
+\index{Apodfc|)}
+\index{Apodfo|)}
+
+\section {Expandfc and Expandfo}
+\label{preprocessors-expand}
+
+\index{Expandfc|(}
+\index{Expandfo|(}
+Expandfc and Expandfo expand structure factor files 
+to $P1$.  Solve\index{Solve} and Back\index{Back} now quietly expand data to 
+$P1$ (which was not the case in earlier versions of Eden).
+Nevertheless,
+Expandfc and Expandfo runs may occasionally have to be a part of the 
+preprocessing of .fcalc and .fobs file in your problem.
+The reason for this is that Eden works in the upper 
+half-ellipsoid ($h \geq 0$), which is not necessarily the case for the
+programs that produced your files.
+
+Consider first Expandfc; run it by typing
+
+\qq {\tt eden expandfc {\it name} {\it fc\_filename.ext}}
+
+where {\it name} stands for the parameter file name without extension 
+{\tt .inp}, containing run conditions and atomic parameters, 
+entered as upper- or lower-case keywords\index{keywords} followed by values
+(see Table~\ref{table-basic}).  There is generally no special input for 
+Expandfc.  However, 
+use the keyword/value pair {\tt ANOM TRUE}\index{keywords!ANOM} for 
+anomalous dispersion files, 
+for which Friedel's relation does not hold.  Otherwise, the utility will
+report very large numbers of mismatches, which it finds when trying to
+satisfy that relation and you will lose the anomalous information.
+
+\vspace {0.1in}
+
+Similarly, run Expandfo by typing
+
+\qq {\tt eden expandfo {\it name} {\it fo\_filename.ext}}
+
+where {\it name} stands for the parameter file name as before
+(see Table~\ref{table-basic}).  
+You should use the keyword/value pair {\tt ANOM TRUE} \index{keywords!ANOM}
+for anomalous dispersion files, 
+for which Friedel's relation does not hold.
+
+\vspace {0.1in}
+
+Although Expandfc and Expandfo require input of
+only the unique set of reflections, they read all reflections,
+expand them, and verify that the expansions are consistent.  
+It sometimes happens that expansion of the original model does not produce
+consistent values.  For example, we have observed data generated by
+Phases from a hexagonal crystal
+for which the centric reflections at $n*60^\circ, n \neq 3,$
+were off by as much as a degree.  In that case, Eden will report
+``mismatches'', the first 20 of which will be written to the log.  
+If you run the Expand utilities with the verbose switch, all the mismatches 
+will be written to the log.
+Do check these to be sure that there isn't some real error in the crystal
+classification.  Regarding the naming of the output of these
+programs, consider running Expandfc on {\it fc\_filename.ext}; 
+the output file will be named {\it fc\_filename}{\tt \_P1.}{\it ext} for 
+ordinary data; {\it fc\_filename}{\tt \_P1plus.}{\it ext} for anomalous data 
+from a crystal that is not triclinic; 
+and two files named {\it fc\_filename}{\tt \_P1plus.}{\it ext} and 
+{\it fc\_filename}{\tt \_P1minus.}{\it ext} for anomalous data 
+from a triclinic crystal.\footnote{ In fact, {\it fc\_filename}{\tt\_P1minus} has the 
+complex conjugate of {\it fc\_filename} for the negative {\it h} hemi-ellipsoid.
+Eden Solve uses those as such.}
+Corresponding names apply to the output of Expandfo.
+
+The expansion preprocessors in Eden do a simple expansion of the data in your
+input files to $P1$. Whenever 
+the expression ``expanded to P1'' appears in this manual, the meaning
+is the unique points in the $h \geq 0$ half-ellipsoid in $(h,k,l)$ space: 
+
+$$ 0 < h \leq \infty,~ -\infty \leq k \leq \infty,~ -\infty \leq l \leq \infty,~ $$
+$$ h = 0,~ 0 < k \leq \infty,~ -\infty \leq l \leq \infty,~ $$ 
+$$ h = 0,~ k = 0,~ 0 \leq l \leq \infty$$.
+
+Normally, you will {\em not} need to expand your fobs and fcalc explicitly;
+the expansion will be done internally, in Back and Solve.
+
+\index{Expandfc|)}
+\index{Expandfo|)}
+
+\section {Back}
+\label{preprocessors-back}
+
+\index{Back|(}
+Back estimates electron/voxel data from a set of
+calculated structure factors, such as a starting phase set. It obtains
+a ``solution map'': the amplitudes of a set of
+Gaussian densities of given width, $\sqrt{\eta}*grid\_spacing$,
+centered on a simple grid or on a body-centered
+grid of given grid spacing. 
+The code reads the diffraction pattern to the appropriate
+resolution and sets up a physical-space map on a grid
+at resolution {\it grid\_spacing}, where
+$grid\_spacing = 0.6 * resolution$ for a simple grid and
+$grid\_spacing = 0.7 * resolution$ for a body-centered grid.
+It varies the number of elements in each grid cell in this map, such that
+their fast Fourier transform, multiplied by
+$F(h k l)$ by $exp[-\eta*\pi^2*(dr)^2*|h|^2]$
+is optimally close to the input diffraction pattern.
+Note that Back is {\em not} simply a back-FFT of the starting phase set, 
+Such a procedure could produce negative electron/voxel values, that
+Eden abhors.  Rather, Back (like Solve\index{Solve}) 
+applies a conjugate gradient 
+optimization search to find the set of non-negative electron/voxel values 
+that are the best fit to the input phase set.
+
+\vspace {0.1in}
+
+The main purpose of this calculation is to provide 
+a ``known'' map to serve as its input model to Solve\index{Solve}. 
+Another purpose is to prepare a higly smeared map that will serve
+as the basis for preparing solvent targets for Solve\index{Solve}.
+When the solver is run in ``completion'' mode, Back's output values 
+will provide initial lower bounds on the solver .
+
+\vspace {0.1in}
+
+Run Back by typing
+
+\qq {\tt eden [-v] back {\it name}}
+
+or
+
+\qq {\tt eden [-v] back {\it name} {\it fc\_filename}}
+   
+where {\it name} stands for the parameter file name without extension 
+{\tt .inp}, containing run conditions and atomic parameters, 
+entered as upper- or lower-case keywords\index{keywords} followed by values.  
+See Table~\ref{table-back} (which is a subset of the input described in 
+Table~\ref{table-solve}).  Using the first form, you should enter the name
+of the fcalc file as an entry in the input file (FC\_FILENAME),  Using the second 
+form, that name appears on the execute line ({\it fc\_filename}).
+Use of the verbose switch ({\tt -v}) causes
+Back to write the value of the cost function at each iteration into a file
+named {\it name}{\tt .cost}.  This is seldom of interest!
+
+\begin{table}[htb]
+\caption {\large Input for Back}
+\label{table-back}
+
+\begin{tabbing}
+XXXXXXXXXXXXX \= nnnnnnnnnnnnnnnnnnnnnn \= 
+blahblahblahblahblahblahblahblah \= none \kill
+
+Keyword \> Example of value \> description \> default \\
+\\
+\> basic input for all Eden programs (see Table~\ref{table-basic}) \> \\
+\\
+SYMMETRY \> P3221 \> \# space group name \>  none \\
+CELL \> 57.2~~33.9~~68.7~~90~~90~~120 \> \# unit cell dims in \AA ngstrom \> none \\
+\> \> \# and angles in degrees \> none \\
+RESOLUTION \> 2.0 \> \# resolution in \AA ngstrom \> none \\
+RECORD \> myrecord \> \# file name for a brief report \> history \\
+\\
+\> other required input for Back (if not on the execute line)  \> \\
+\\
+FC\_FILENAME \> k.fcalc \> \# calculated struc factor file \> none \\
+\\
+\> uncommonly used input for Back  \> \\
+\\
+DFDX\_CRIT \> 0.003 \> \# decrease in gradient to end run
+\> 0.001 \\
+R\_STOP   \> 0.03 \> \# R factor to end run \> 0 \\ 
+
+\end{tabbing} 
+\end{table}
+
+\vspace {0.1in}
+
+Back uses an optimization process that is very similar to that of 
+Solve\index{Solve}
+(see Section~\ref{solver-running}) but without the outer iteration loop.
+Like Solve\index{Solve}, Back writes a full log and (if the verbose switch 
+is invoked) a
+listing of the cost function values.  Back no longer writes out a new structure
+factor file that is consistent with the electron/voxel file, since such a file
+is no longer used as input to Solve\index{Solve}.  If you need such a structure factor file,
+you should run Forth\index{Forth} on the electron per voxel file that Back 
+writes.  The electron/voxel file that 
+Back produces may be regridded, using the postprocessor Regrid\index{Regrid}, 
+just like Solve\index{Solve} output electron/voxel files.  The regridded
+{\it map} file may then be used to view the starting model.
+   
+\index{Back|)}
+\section {Maketar}
+\label{preprocessors-maketar}
+
+\index{Maketar|(}
+The principal purpose of Maketar is to prepare solvent targets and weights 
+for Solve\index{Solve} runs.  Another use is to prepare stabilizing targets for a partial 
+model.  Run Maketar by typing:
+
+\qq {\tt eden maketar {\it name modfile}}
+
+where {\it name} is an input parameter file name without extension {\tt .inp} 
+and the electrons/voxel will be taken from {\it modfile}{\tt .bin}.  
+For a solvent target, 
+the electrons/voxel file is typically prepared by running Apodfc\index{Apodfc} 
+at a very low resolution (e.g.,~7 \AA ngstrom).
+The Apodfc\index{Apodfc} output then serves as the 
+FC\_FILENAME\index{keywords!FC\_FILENAME} in a Back run at the regular
+resolution, providing electron/voxel files for use by Maketar.
+Points in the input electron/voxel files are redefined as ``low'' and ``high''
+such that the (input) fraction $mask\_fraction$ are targetted.
+You may replace a global $mask\_fraction$ by another input, $threshold$, whose
+value in electrons/cubic \AA ngstrom (after suitable conversion
+to electrons/voxel) designates the level below which voxel values are ``low''.
+
+\vspace {0.1in}
+
+The sense of the weight file is determined by the obligatory input, $target$
+whose possible values are ``low'' or ``high''.  If ``low'', the low voxel
+values have weights of 1; if ``high'', the high voxel values have weights
+of 1.
+
+\vspace {0.1in}
+
+Maketar expects to find an input parameter file, {\it name}{\tt .inp}, 
+containing the usual basic parameters plus some special input parameters.
+See Table~\ref{table-maketar}.
+Output is written to binary files named {\tt weight} and 
+{\tt target} with the usual {\tt .bin} extension. 
+The weight files contain 1's at targetted points, 0's elsewhere.
+The target files, which are useful only for solvent targets,
+ contain $target\_value$ at all points.
+In fact, the contents of the target files at points for which the
+weight is 0 are irrelevant.
+
+\begin{table}[hbt]
+\caption {\large Input for Maketar}
+\label{table-maketar}
+
+\begin{tabbing}
+XXXXXXXXXXXXX \= nnnnnnnnnnnnnnnnnnnnnn \= 
+blahblahblahblahblahblahblahblah\= none \kill
+
+Keyword \> Example of value \> description \> default \\
+\\
+\> basic input for all Eden programs (see Table~\ref{table-basic}) \> \\
+\\
+SYMMETRY \> P3221 \> \# space group name \>  none \\
+CELL \> 57.2~~33.9~~68.7~~90~~90~~120 \> \# unit cell dims in \AA ngstrom \> none \\
+\> \> \# and angles in degrees \> none \\
+RESOLUTION \> 2.0 \> \# resolution in \AA ngstrom \> none \\
+\\
+\> other obligatory input for Maketar  \> \\
+\\
+TARGET \> low \> \# ``high'' or ``low'' \> none \\
+\\
+MASK\_FRACTION  \> 0.4 \> \# fraction of points targetted \> 0.5 \\
+\\
+\> ... or   \\
+\\
+THRESHOLD  \> 0.30 \> \# threshold density, in el/\AA$^3$ \\
+ \> \> \# for targetting \> none \\
+
+\> optional input for Maketar  \> \\
+\\
+RECORD \> myrecord \> \# file name for a brief report \> history \\
+TARGET\_VALUE  \> 0.25 \> \# cutoff in el/\AA$^3$ for target \> 0.34 \\
+
+
+\end{tabbing} 
+\end{table}
+
+$\bullet$ TARGET.\index{keywords!TARGET}  
+This is an obligatory input whose value is ``low'' or
+``high''.  Use ``low'' for a solvent target prepared with Apodfc\index{Apodfc}; 
+use ``high'' for a 
+solvent target prepared with X-PLOR/CNS\index{X-PLOR}\index{CNS} or for a stabilizing (protein) target.  
+If $target$ is low, the low points, as determined by the $mask\_fraction$ or 
+$threshold$, will have their weights set to 1.
+If $target$ is high, the high points, as determined by the $mask\_fraction$ or 
+$threshold$, will have their weights set to 1.
+
+$\bullet$ MASK\_FRACTION.\index{keywords!MASK\_FRACTION}  
+This specifies the fraction of all points in the 
+electron/voxel input file that should be targetted 
+and hence defines the level separating low from high points.
+
+$\bullet$ THRESHOLD.\index{keywords!THRESHOLD}
+  This is an alternate way of defining the level 
+separating low from high points.  It sets the limiting low value 
+in terms of el/\AA$^3$. 
+
+$\bullet$ TARGET\_VALUE.\index{keywords!TARGET\_VALUE}
+  This specifies the electron density that will be
+written into all positions in the ``target'' file.
+For a solvent target, typically you will use the default value 
+of 0.34 electrons/\AA$^3$.
+For a stabilizing target, this input is superfluous --- in fact, 
+the file named ``target.bin'' may be discarded.
+Instead, the input file ({\it modfile}) will serve as the target.
+
+\vspace {0.1in}
+
+Please note that if you change the resolution at which Eden is working, 
+you must rerun both Back\index{Back} (to prepare the physical-space model) 
+and Maketar.
+
+\index{Maketar|)}
+
+\section {Sym}
+\label{preprocessors-sym}
+
+\index{Sym|(}
+Sym is a utility for manipulating pdb\index{pdb} information directly.  It is
+used in Eden for two purposes: (a) reporting points of crystallographic 
+symmetry in the unit cell; 
+(b) identifying fractional limits in the /pdb 
+file for Regrid\index{Regrid} (see Chapter~\ref{postprocessors}).
+
+Run it by typing 
+
+\qq {\tt eden [-i] sym {\it sname} {\it pdbname}}
+
+where {\it sname} stands for the input parameter file name typed without 
+its {\tt .inp} extension and {\it pdbname} stands
+ for the pdb\index{pdb} file name with or without its {\tt .pdb} extension.  
+
+\qq optional {\tt -i} stands for interactive mode; you
+will be prompted to enter atomic coordinates from the terminal
+and Sym will report to you all points related to your input by 
+crystallographic
+symmetry.  In interactive mode, {\it pdbname} is not needed.
+
+\qq no {\tt -i} stands for non-interactive (default) mode.  In this case,
+Sym reports the
+extent of the pdb\index{pdb} information after expansion, in terms of fractional values
+along the crystallographic axes.
+
+\vspace {0.1in}
+
+Sym expects to find an input parameter file 
+containing the information described in Table~\ref{table-basic} 
+Optionally, you may use keyword OVERLAP\index{keywords!OVERLAP}
+ with a value {\it dist} 
+(only in non-interactive mode) for checking purposes; it tells
+Sym to report and eliminate any atom in the pdb\index{pdb} file if it overlaps another
+atom (in another asymmetric unit within a distance of {\it dist} \AA .
+Such atoms are eliminated from all equivalent positions.  
+
+\vspace {0.1in}
+
+Please do check the output of Sym with regard to the atoms found; Eden expects
+that the ATOM (or HETATM) information is written according to the CCP4
+specifications, but we have sometimes encountered 'illegal' cases.
+Pdb\index{pdb} files are read by Sym, Tohu\index{Tohu} 
+and Count\index{Count} utilities
+
+The Sym and Tohu\index{Tohu} logs include Matthews' coefficient 
+\footnote{ 'The CCP4 Suite', p.49 - 50.},  
+which is defined as vol/mass of the full cell.
+They also include the protein volume fraction.
+
+\index{Sym|)}
+
+\chapter {Viewing Eden's Results}
+\label{postprocessors}
+
+\section {Regrid}
+\label{postprocessors-regrid}
+
+\index{Regrid|(}
+Regrid takes as input a set of physical-space files in electrons/voxel that 
+are the result of a Solve\index{Solve} (or a Back\index{Back}) run.  It
+produces an electron density map in units of electrons/cubic \AA ngstrom
+on a grid that is {\it N} times finer than the input, 
+where {\it N} is a small integer (by default, 2).
+For the default $\eta$, a 2:1 regridded map produces data 
+on a grid that is $\approx 3$ times finer than $resolution$.  
+This is the usual practice in crystallography.
+For a body-centered grid type, the value of {\it N} must be even. 
+For non-default values, {\it N} is read from the execute line:
+
+\qq {\tt eden regrid {\it name sname [N]}}
+
+Regrid expects to find an input parameter file {\tt {\it name}.inp} and, 
+the binary file {\tt {\it sname}.bin}.  Regrid assembles a single
+electron density map from the binary information. 
+It writes an X-PLOR/CNS\index{X-PLOR}\index{CNS} file {\tt {\it sname\_N}.map} in the standard 
+format, ready for viewing in O (after running Mapman~\cite{kleywegt}).
+If you use PyMOL, switch the extension {\tt  .map} to {\tt .xplor}.
+
+\vspace {0.1in}
+
+If you display electron densities with XtalView\index{XtalView} in place of O\index{O} 
+you should follow an Eden Solve\index{Solve} by running Forth\index{Forth}, and then an awk\index{awk} script,
+{\tt awk\_xplor\_to\_xtal}, to be found in Appendix~\ref{app-tools}.
+You should then skip the Regrid postprocessing entirely. 
+
+\begin{table}[hbt]
+\caption {\large Input for Regrid}
+\label{table-regrid}
+
+\begin{tabbing}
+XXXXXXXXXXXXX \= nnnnnnnnnnnnnnnnnnnnnn \= 
+blahblahblahblahblahblahblahblah \= none \kill
+
+Keyword \> Example of value \> description \> default \\
+\\ 
+SYMMETRY \> P3221 \> \# space group name \>  none \\
+CELL \> 57.2~~33.9~~68.7~~90~~90~~120 \> \# unit cell dimensions in \AA  \> none \\
+\ \> \> \# and angles in degrees \> none \\
+RECORD \> myrecord \> \# file name for a brief report \> history \\
+RESOLUTION \> 2.0 \> \# resolution in \AA ngstrom \> none \\
+\\
+\> commonly-used optional input for Regrid  \> \\
+\\
+X\_LIMITS \>   -0.5~~0.5 \> \# x limits in fract coords \> $0~~ 1$ \\
+Y\_LIMITS \> -0.6~~0.4 \> \# y limits in fract coords \> $0~~ 1$ \\
+Z\_LIMITS \> 0~~1  \> \# z limits in fract coords \> $0~~ 1$ \\
+\\
+\> or  \> \\
+\
+PDB\_FILENAME \>  mypdb  \> \# for deriving [XYZ]\_LIMITS \> none  \\
+\\
+\> rarely-used optional input for Regrid  \> \\
+\\
+HIGHRES \> TRUE \> \# special high-res processing? \> FALSE \\
+\\
+
+\end{tabbing} 
+\end{table}
+
+Regrid uses the usual input parameter file containing run conditions and 
+parameters plus some unique input.  See Table~\ref{table-regrid}.  
+The values for X\_LIMITS,\index{keywords!X\_LIMITS}
+ Y\_LIMITS \index{keywords!Y\_LIMITS} and Z\_LIMITS \index{keywords!Z\_LIMITS}
+may extend over negative or
+positive fractional ranges, depending on the region of visual interest.
+If you don't know what the ranges should be but you have a fairly complete 
+pdb\index{pdb} file, Regrid can use it to derive the appropriate ranges.
+
+\index{Regrid|)}
+
+\chapter {Evaluation Utilities}
+\label{evaluation}
+
+\section {Overview}
+
+In addition to viewing the electron density with O, XtalView or PyMOL,
+Eden provides some tools for quantitative evaluation of its results.  
+These tools are complementary to the usual tools for 
+refinement -- i.e.fitting models.
+
+\section {Count}
+\label{evaluation-count}
+
+\index{Count|(}
+Count counts the electrons in the environment of each atom in an 
+associated pdb\index{pdb} file, using as its source the result of a Solve\index{Solve} 
+run.  Count assumes that atoms are spherical and have a Gaussian fall-off
+in space; it deals correctly with partitioning electron density among
+overlapping atoms.  This is a useful utility for
+gauging the success  of a high-resolution Solve run.
+
+The invocation for Count is:
+
+\qq {\tt eden count {\it name sname [N] }}
+
+where {\it name} stands for an input parameter file name
+      {\it sname} stands for the base name of the binary
+                        file to be counted,
+  and {\it N}  stands for a regrid factor (2 by default)
+
+Internally, Count applies the Regrid\index{Regrid} algorithm before counting. Thus, input
+may also include the ``regrid factor'' used in Regrid\index{Regrid}; however, a value 
+other than the default (2) is unlikely to be useful.
+
+There are 3 special keywords for Count --- see Table~\ref{table-count}:
+the mandatory PDB\_FILENAME and BCORR, and optional LEVELS.  
+PDB\_FILENAME is self-explanatory.
+BCORR is a correction to the pdb file B values, that is normally 0
+but may be changed if the fobs file was apodized prior to running Solve.
+In this case, use the value reported in the {\tt apodfo.log} file.
+
+LEVELS sets the fractions of RESOLUTION defining radii for counting.
+They  are the multipliers of radii corresponding to the (corrected) B values
+of the atoms.  
+
+Count writes an ASCII file, {\tt {\it sname}\_N.count}, containing most of the 
+pdb\index{pdb} file
+information plus the electron count around each atom, extended out to 
+1, 1.5 and 2 radii, by default.
+
+\begin{table}[hbt]
+\caption {\large Input for Count}
+\label{table-count}
+
+\begin{tabbing}
+XXXXXXXXXXXXX \= nnnnnnnnnnnnnnnnnnnnnn \= 
+blahblahblahblahblahblahblahblah \= none \kill
+
+Keyword \> Example of value \> description \> default \\
+\\ 
+SYMMETRY \> P3221 \> \# space group name \>  none \\
+CELL \> 57.2~~33.9~~68.7~~90~~90~~120 \> \# unit cell dims in \AA ngstrom \> none \\
+\ \> \> \# and angles in degrees \> none \\
+RESOLUTION \> 2.0 \> \# resolution in \AA ngstrom \> none \\
+RECORD \> myrecord \> \# file name for a brief report \> history \\
+PDB\_FILENAME \> abc.pdb \> \# file of atoms to be counted  \> none \\
+BCORR \> 0   \> B-value correction \> none  \\
+\\
+\> commonly-used optional input for Count  \> \\
+\\
+LEVELS \> $1.5~~2.~~2.5$  \> 3 levels at which to count \> $1.~~1.5~~2.$ \\
+\\
+
+\end{tabbing} 
+\end{table}
+
+\index{Count|)}
+
+\section {Shapes}
+\label{evaluation-shapes}
+
+\index{Shapes|(}
+
+Shapes determines the local topology at each point in a (regridded) data set.
+It uses the same input as Regrid\index{Regrid} (see Table~\ref{table-regrid}).  
+It establishes the topography in terms of one of 10 possible shapes, according
+to the values of 1st and 2nd derivatives of the density at a point.
+See Table~\ref{table-shapes}.  
+The indices (0 -- 5) may be considered ``normal''; other values are probably
+unphysical and indicate some problem in shape determination.
+
+\begin{table}[hbt]
+\caption {\large Local Shapes}
+\label{table-shapes}
+
+\begin{tabbing}
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX \= nnnn \kill
+shape descriptor  \> index \\
+\\
+uniform \> 0 \\
+blob \> 1 \\
+snake \> 2 \\
+saddle \> 3 \\
+plate \> 4 \\
+constriction \> 5 \\
+negative saddle \> 6 \\
+negative plate \> 7 \\
+negative snake (tunnel)  \> 8 \\
+negative blob (hole)  \> 9 \\
+``none of the above''  \> -1 \\
+\\
+
+\end{tabbing} 
+\end{table}
+
+\index{Shapes|)}
+
+\section {Dphase}
+\label{evaluation-dphase}
+
+\index{Dphase|(}
+Dphase calculates the phase differences 
+and the cosines of the phase differences, both weighted by amplitudes,
+between comparable $\hbar = (h k l)$ structure factors in two fcalc files.
+It also calculates R factors, in order to estimate amplitude differences
+in the two files.
+
+\vspace {0.1in}
+
+For clarity, we use $h$ in place of $\hbar$ 
+and $N_h$ for the total number of structure factors.
+Denoting by $\phi_h$ and $\psi_h$ the phases for comparable $(h,k,l)$
+structure factors in the two files and by $F_h$ the amplitude of (either)
+one of them, Dphase reports the average phase difference:
+
+$$ \sum_{h=1}^{N_h} {F_h * |\phi_h - \psi_h|}  / \sum_{h=1}^{N_h} {F_h}$$
+
+and the average cosine of the phase difference:
+
+$$ \sum_{h=1}^{N_h} {F_h * cos(\phi_h - \psi_h)}  / \sum_{h=1}^{N_h} {F_h}$$
+
+together with the number of addends in the summation.
+The information is reported first for all phases,
+then for restricted (centric) phases only.
+The report is prepared twice --- once weighted by the amplitudes of
+the first fcalc file and then weighted by the amplitudes of
+the second.  In each case, data are averaged and reported over shells 
+of equal $1/d^2$ in $(h k l)$ space.
+Dphase excludes terms for which the amplitude in either file is 
+0 and it excludes the (000) term.
+The R factors are calculated as in Solve\index{Solve}, except that first one and then 
+the other fcalc file serves as the ``data''.
+   
+\vspace {0.1in}
+
+Run Dphase by typing:
+
+\qq {\tt eden dphase {\it name sfname1 sfname2}}
+
+where {\it name} stands for an input parameter file name
+without extension {\tt .inp}.
+Input will be taken from two fcalc files of structure factors, 
+{\it sfname1} and {\it sfname2}, with extensions written out in full.
+Dphase expects the input parameter file, {\tt {\it name}.inp}, to contain 
+basic parameters as described in Table~\ref{table-basic}.
+Note that the two fcalc files should be similarly apodized.
+
+\vspace {0.1in}
+
+It is our experience that two structure factor files whose overall phase 
+difference is less than $20^\circ$ will have physical-space counterparts that
+are indistinguishable when viewed with a crystallographic display program.
+A phase difference of $30^\circ$ is just noticeable.
+
+\index{Dphase|)}
+
+\section {Distance}
+\label{evaluation-distance}
+
+\index{Distance|(}
+
+Distance compares real-space {\it .bin} files, using several measures,
+as described below.
+It may be used to compare up to 8 files at a time, reporting the distances
+among them in the form of a matrix.
+
+Distance reports
+the rms fractional distance between pairs of input files:
+
+$$\sqrt{ \sum_{p=1}^P {(n_p - n^\prime_p)^2}~/~(\sum_{p=1}^P {(n_p)^2} + \sum_{p=1}^P {(n^\prime_p)^2})}$$.
+
+and the absolute linear fractional distance between pairs of input files:
+
+$$ \sum_{p=1}^P {|n_p - n^\prime_p|}~/~\sum_{p=1}^P (n_p + n^\prime_p)/2$$.
+
+Distance also reports the correlation coefficient 
+for the data in pairs of files:
+
+$$ r = \frac {\sum_{p=1}^P {(n_p-\overline{n})(n^\prime_p-\overline{n^\prime})}}
+{\sqrt{\sum_{p=1}^P{(n_p-\overline{n})^2}}
+ \sqrt{\sum_{p=1}^P{(n^\prime_p-\overline{n^\prime})^2}}} $$
+
+\index{Distance|)}
+
+\section {Variance}
+\label{evaluation-variance}
+
+\index{Variance|(}
+Variance compares a number, $M (\le 50)$ of input binary files;  it writes 
+three output binary files: average.bin, containing the average of the $M$ 
+inputs at each voxel: 
+
+$$ <n_{p}> = \sum_{m=1}^{M}n_{p} / M $$
+
+sterror.bin, containing the standard error (square root of the variance) 
+at each voxel:
+
+$$ ste(n_{p}) = \sqrt{\sum_{m=1}^{M} (n_{p} - <n_{p}>)^2/(M-1)} $$
+
+and erwm.bin, the error-weighted average at each voxel:
+
+$$ erw(n_{p}) = <n_{p}>^2 / (<n_{p}> + ste(n_{p}))  $$
+
+This is a useful utility to run in conjunction with Perturbhkl\index{Perturbhkl}:
+if the solution of a high-resolution fcalc file is repeatedly perturbed and
+solved, then finally averaged using Variance, an even better map should result.
+See also {\tt stab\_script} and {\tt doit} in Appendix~\ref{app-tools}
+
+Run Variance by typing:
+
+\qq {\tt eden variance {\it pname} {\it b1 b2 b3 b4 b5 b6 b7 b8}}
+
+where {\it pname} stands for the input parameter file and 
+{\it b1 b2 \dots} stand for the names of the binary Solve output files 
+to be compared.
+
+\index{Variance|)}
+
+\chapter {Advanced Topics} 
+\label{advanced}
+
+\section {Stopping Criteria for Solve\index{Solve} Runs}
+\label{advanced-stop}
+
+There are a number of reasons why the conjugate gradient solver in Solve
+will quit. Some of the commoner ones will now be described.
+A succeesful Solve run generally ends on one of the following three conditions
+(where the numbers are examples only):
+
+$\bullet$ ``discrepancy principle satisfied''
+
+$\bullet$ ``Stopping - Rfac is less than 0.02''
+
+$\bullet$ ``getsol worked, 325 funct calls'' 
+
+The discrepancy principle is a measure of the inherent accuracy of the fobs
+measurements (based on the $\sigma$ values).  
+Using it helps to prevent the program
+from overfitting the diffraction data.
+The Rfac stopping criterion will be effective only if you have set
+R\_STOP\index{keywords!R\_STOP}, since the default is 0.
+Setting $r\_stop$ to a larger value can also prevent 
+Solve\index{Solve} from ``churning''; however, if your fobs file 
+has $\sigma$ values, the discrepancy criterion 
+generally achieves the same goal in a less arbitrary fashion.
+The third condition does not always signal genuine ``success''; 
+it is based on the inner
+workings of the complex conjugate gradient solver \cite{gill}.
+
+\vspace {0.1in}
+
+The most commonly encountered reason for the inner iteration loop in Solve to stop 
+(and a new outer iteration to begin) is:
+
+$\bullet$ ``df/dx went down enough''
+
+The value of $dfdx\_crit$ that triggers this message is governed by
+keyword DFDX\_CRIT\index{keywords!DFDX\_CRIT} whose default is $3 * 10^{-2}$,
+It determines the extent to which the conjugate gradient optimizer will persist 
+in the face of a decreasing gradient of the function being optimized.
+It is sometimes useful to play with its value in range $10^{-4}$ to $10^{-2}$.
+Use  it in conjunction with observations of the cost file, which is written
+when Solve is run in verbose mode.
+
+\vspace {0.1in}
+
+The most common overall condition for stopping Solve is:
+
+$\bullet$ ``Stopping - standard deviation is not decreasing \dots ''
+
+\vspace {0.1in}
+
+Unsuccessful Solve runs will typically have one of the following 
+self-explanatory reasons for ending:
+
+$\bullet$ ``Exceeded maximum \# of iterations in getsol''
+
+$\bullet$ ``Dead in the water - making no progress''
+
+(The maximum number of iterations, MAXIT, is currently 600.)
+
+\section {Debug Aids}
+\label{advanced-debug}
+
+
+There are several ways in which you can get ``inside information'' on the
+way that Solve\index{Solve} (or another program) is working; the main method
+is to run Solve\index{Solve} or Back\index{Back} with the verbose switch:
+
+\qq {\tt eden -v solve run22}
+
+for example.  In this case, Solve\index{Solve} will produce a file, {\tt run22.cost} that
+lists the cost function each time it is calculated.  If the cost function 
+has components --- e.g., in an MIR\index{MIR} run, 
+or with physical-space constraints
+--- each of those components is also listed in that file.
+There is additional output in the form of outlier reports, described in 
+Section \ref{solver-output}, if the verbose switch is set.
+
+\vspace {0.1in}
+
+If you are concerned about the various $(hkl)$ procedures that determine 
+forbidden reflections and unique reflections, or if you 
+just want to explore the symmetry operations that are being applied for
+your space group, you may turn on a (hidden) 
+``very\_verbose'' switch (with upper-case {\tt V}):
+
+\qq {\tt eden -V solve run22}
+
+This will list a lot of details in your log files, including $h - k$
+maps by l-slice of various masks.  It will also inform you about memory allocations
+and deallocations during the running of the program.
+if you encounter problems with memory allocation and you are using double precision
+for all Eden's activities, you should consider switching to single precision, using the
+DOUBLESWITCH in the Makefile.
+
+\section {Other Utilities}
+\label{advanced-other}
+
+The first thing you may notice if you type {\tt eden} without arguments is
+that the general help message lists a number of programs that have been
+mentioned only briefly or not at all up to this point.
+They are mainly of interest to code developers.  
+Nevertheless, for the record, a brief summary of each of them follows.  For
+further information, use the help flag:
+
+\qq {\tt eden -h {\it program}}.
+
+$\bullet$ Addmaps\index{Addmaps} adds or subtracts comparable entries in 
+two sets of real-space binary (electron/voxel) files.  Note:  files with the
+{\tt .bin} extension, {\em NOT} with the {\tt .map} extension!
+The input files must be compatible (of the same 
+dimensions).  As usual, you need not worry about body-centered cubic file sets
+as against simple cubic file sets: the program handles this distinction 
+automatically.  Addmaps adds its input maps using coefficients keyords
+C1\index{keywords!C1} and C2\index{keywords!C2}
+that default to 1.  You may set keyword C2 to $-1$ in the input file, in order
+to subtract file2 from file1, or you may request any other linear
+combination of the files.
+
+$\bullet$ Cadhkl\index{Cadhkl} (Combines Assorted Data) \footnote{Thanks to CCP4 \cite{ccp4}.}
+adds, merges or eliminates comparable entries in two structure 
+factor files.  Entries are added by default, but
+only if both files contain them.  As in the case of Addmaps (see above), 
+you may enter coefficients, {\tt C1} and {\tt C2} for the files.  
+You may set keyword C2 to $-1$ in the input file, in order
+to subtract file2 from file1, or you may request any other linear
+combination of the files.
+You may also merge two structure factor files
+if there is a keyword MODE\index{keywords!MODE} whose value is {\tt merge}.
+Cadhkl will take phases from the 
+first file and amplitudes from the second; in this case, the second named file
+ may be either an fcalc or an fobs file.  
+If the value of MODE\index{keywords!MODE} is 
+{\tt eliminate}, Cadhkl writes into the output file amplitudes and sigmas from the
+first named file if and only if the (hkl) entry is {\em not} in the second 
+named file. Both input files are expected to be fobs files.
+
+$\bullet$ Forth\index{Forth} applies a Fast Fourier Transform to electron/voxel 
+information, converting it to structure factors.  The output of Forth\index{Forth} is a file
+named {\tt {\it sname}\_forth.hkl}
+where {\it sname} stands for the binary file base name.
+
+$\bullet$ Multmaps\index{Multmaps} multiplies comparable entries in 
+two sets of real-space binary (electron/voxel) files.  Note:  files with the
+{\tt .bin} extension, {\em NOT} with the {\tt .map} extension!
+The input files must be compatible (of the same 
+dimensions).  As usual, you need not worry about body-centered cubic file sets
+as against simple cubic file sets: the program handles this distinction 
+automatically.  This is a convenient way to apply a mask to another map file.
+
+$\bullet$ Perturbhkl\index{Perturbhkl} applies a perturbation 
+to both real and imaginary parts
+of the structure factors of an input fcalc file.  The applied perturbation
+is identified on the execute line in terms of a fraction (e.g. ``0.2'' for a
+20\% perturbation) and a starting seed for the random number generator.
+Perturbhkl\index{Perturbhkl} is a useful tool to use in conjunction with the 
+Variance\index{Variance}
+utility, to evaluate with high precision the stability of a high-resolution 
+Solve result.  See also {\tt stab\_script} in Appendix~\ref{app-tools}.
+
+$\bullet$ Refine\index{Refine} enables you to do a ``re-refinement'' of your
+Eden solution.  If you feel that your final results contain really reliable
+phases, you can use the .map file as a basis for fine-tuning your .pdb file.
+This new module will optimize positions (x, y, z), B factors and occupancies 
+of all the pdb entries to give an optimal fit to the electron densities that
+Eden produced in your map.  Our experience with this module is very limited
+and we will appreciate any data that you, the users of Eden, can provide
+regarding its usefulness.  
+
+$\bullet$ Tohu\index{Tohu} reads a pdb\index{pdb} file and transforms its data into a 
+structure factor (fcalc) file.  It regards atoms as points (i.e., 
+it does not use atomic structure factors from the literature) 
+but it accepts a B value for each atom.
+It makes appropriate use of occupancies and produces structure factors
+that are on an absolute scale.  Tohu\index{Tohu} may be regarded as a 
+simple-minded alternative to standard crystallographic programs with the
+same general purpose, such as SFALL in CCP4.  It is possible to process anomalous data in 
+Tohu\index{Tohu} if you set keyword {\tt ANOM}\index{keywords!ANOM} 
+to {\tt TRUE}.  
+In that case, Tohu\index{Tohu} will write out a file of ``hydrogen'' 
+atoms at the specified positions; further
+processing (using Z, $f^\prime$, and $f^{\prime\prime}$) 
+is relegated to Solve\index{Solve}.
+
+\appendix
+\chapter {General Installation}
+\label{app-installation}
+
+You should have a directory, {\tt EDEN/} with the following subdirectories:
+{\tt source/} containing files with extensions {\tt c},
+{\tt f}, {\tt h} and {\tt lib} plus a Makefile;
+{\tt help/} containing the files invoked when Eden encounters errors or
+requests for help;
+{\tt example1/} containing input for a trivial test problem;
+%%{\tt tools/} containing some awk\index{awk} scripts for making your life easier, 
+%%as well as code for byte-swapping (see~\ref{app-tools});
+and {\tt manual/} containing the PDF version of this manual.
+
+\vspace {0.1in}
+
+There are several adjustments that you need to make before you can compile 
+and load Eden.  They relate both to the contents of the Makefile and to 
+the FFTW library.  First, you may need to re-install FFTW and change the 
+location of the FFTW include and libraries.  Here is the procedure that 
+I have found to be satisfactory: when you have located
+and downloaded fftw-2.1.5.tar.gz, unzip it and run
+
+\vspace {0.1in}
+
+\qq {\tt  tar -xf fftw-2.1.5.tar}
+
+\vspace {0.1in}
+
+to extract the contents. 
+Prepare an address for your new information (e.g. {\tt \$HOME/myfft})
+and then type
+
+\vspace{0.1in}
+
+\qq {\tt make clean}
+
+\qq {\tt ./configure --enable-type-prefix --prefix=``\$HOME/myfft'' --enable-float}
+
+\qq {\tt make}
+
+\vspace{0.1in}
+
+This will create the single-precision version of fftw, 
+placing libraries in myfft/lib and include files in myfft/include.  
+Then do the same without --enable-float for the double-precision library:
+
+ \vspace{0.1in}
+
+\qq {\tt make clean}
+
+\qq {\tt ./configure --enable-type-prefix --prefix=``\$HOME/myfft'' }
+
+\qq {\tt make}
+
+\vspace{0.1in}
+
+Second, you must decide whether to compile and use Eden in single-
+precision or double-precision or both.  (Of course, if you do both, you must ''make clean''
+between compiling in one precision and the other.)
+
+\vspace{0.1in}
+
+Third, you may wish to change the optimization level in the Makefile. 
+And finally,
+you may need to change the location of the executables.
+There are comments in the Makefile to guide you in all these.
+Having made the adjustments, you should be able to compile and load Eden
+by issuing the commands 
+
+\qq {\tt cd \$EDENHOME/source}
+
+\qq {\tt make install}
+
+Note that object code is first written into the {\tt source/} directory; 
+the word ``install'' transfers it to the bin/ directory.  It is named ``deden'' 
+or ``seden'' (for double- and single- versions, respectively) 
+with ``eden'' being a simple
+script that directs you to the most recently installed version.
+We have encountered the following apparently harmless warning message on SGI 
+machines while linking the object code: 
+
+{\tt ld: WARNING 85: definition of main in eden.o }
+
+{\tt  preempts that definition in /usr/lib/libftn.so.}  
+
+Recent code versions with the Refine package make use of the GSL library;
+we have encountered the following message -- again, apparently harmless,
+if obscure -- when linking this library on our MacOSX:
+
+{\tt ld: warning dynamic shared library: /sw/lib/libgslcblas.dylib not}
+
+{\tt made a weak library in output with MACOSX\_DEPLOYMENT\_TARGET}
+
+{\tt environment variable set to: 10.1}
+
+If there are other (real) problems, please contact
+Hanna Sz\H{o}ke, (phone: 925-422-9248, e-mail: \verb+szoke2@llnl.gov+).
+
+\vspace {0.1in}
+
+This manual describes Eden Version 5.2; when you type {\tt eden}, that
+version number should appear on your terminal.  
+If a different version of Eden is reported, you have a mismatch between
+source code and manual, and the executable will {\em not} always behave
+as described here.  
+
+\chapter {Tools}
+\label{app-tools}
+
+If your computer is not IEEE but has little-endian addressing and you 
+exchange {\tt .bin} files with users who work at big-endian computers
+(or vice-versa), those files must have their floating-point entries 
+byte-swapped before they may be used as expected.
+To do this, look for an executable in your bin/
+directory {\tt fbyteswap} and run it with two arguments --- 
+the input file and an output 
+file which should then replace the original.  Once you have done this, you
+should have no further need for byte swapping.
+
+There are other tools that may make your life easier; 
+here is an example.     
+
+awk\_hkl\_to\_xplor:
+
+\# \\
+\#       AWK script to convert .hkl file in fixed (3I4,2F8.2) format to  \\
+\#       an X-PLOR format that EDEN can read.  The script will work for \\
+\#       input files in which fields lack white space separators. \\
+\# \\
+\#       Run it by typing: \\
+\#               awk -f awk\_hkl\_to\_xplor < [infile] > [outfile] \\
+\# \\
+\#       where [infile] and [outfile] stand for input \& output file names. \\
+\# \\
+\{line=\$0; \\
+a=substr(line,1,4);  \\
+b=substr(line,5,4);  \\
+c=substr(line,9,4);  \\
+d=substr(line,13,8); \\
+e=substr(line,21,8);  \\
+print ``IND '', a, b, c, `` FOBS '', d, `` SIG '', e \} \\
+
+
+\begin{thebibliography}{99}
+
+
+\bibitem{xplor} Br\"{u}nger, A.T. (1992)
+{\em X-PLOR: A System for Crystallography and NMR} Version 3.1.  
+New Haven: Yale University.
+
+\bibitem{ccp4} {\em The CCP4 Suite - Overview and manual} (2004).  
+
+\bibitem{cowtan} Cowtan, K. and Main, P.,
+{\em Miscellaneous Algorithms for Density Modification}.
+Acta Cryst. D54, 487 - 493.
+
+\bibitem{creighton} Creighton, T. E. (1993),
+{\em Proteins: Structure and Molecular Properties}. 2nd edition, Freeman, New
+York.
+
+\bibitem{gill} Gill, Murray and Wright,
+{\em Practical Optimization}, pp 306-7.  Academic Press, 1981.
+
+\bibitem{glusker} Glusker, J. P. and Trueblood, K. N., {\em Crystal Structure Analysis}, 1985.
+
+\bibitem{getsol} Goodman, D.M., Johansson, E. \& Lawrence, T.W. 1993.
+{\em Multivariate Analysis: Future Directions}, edited by Rao, C.R., Ch. 11,
+Amsterdam: Elsevier.
+
+\bibitem{hahn} Hahn, Theo (ed). (1992).
+{\em International Tables for Crystallography}, 3rd edition.  Vol A. Kluwer.
+
+\bibitem{kleywegt} Kleywegt, Gerard.
+{\em Uppsala Software Factory, MAPMAN Manual 1}.
+\newline See www.molsci.csiro.au/gerard/mapman\_man.html.
+
+\bibitem{lanczos} L\'anczos, Cornelius, 
+{\em Linear Differential Operators}, 1961, p. 132.
+
+\bibitem{eden4} Somoza, J.R., Sz\H{o}ke, H., Goodman, D.M., B\'{e}ran, P., 
+Truckses, D., Kim, S-H., \& Sz\H{o}ke, A. (1995) 
+{\em Holographic Methods in X-ray Crystallography.  
+IV. A Fast Algorithm and its Application to Macromolecular Crystallography}.
+Acta Cryst. A51, 691 - 708.
+
+\bibitem{edenwww} Sz\H{o}ke, A., Sz\H{o}ke, H. \&  Somoza, J.R.
+{\em Holographic Methods in X-ray Crystallography.
+CCP4 Daresbury Study Weekend Proceedings}
+\newline http://util.ucsf.edu/people/somoza/holography/references.
+
+\bibitem{eden2} Sz\H{o}ke, A. (1993)
+{\em Holographic Methods in X-ray Crystallography.  
+II. Detailed Theory and Connections to Other Methods of Crystallography}.
+Acta Cryst. A49, 853 - 866.
+
+\bibitem{eden5} Sz\H{o}ke, H., Sz\H{o}ke, A., \&  Somoza, J.R.
+{\em Holographic Methods in X-ray Crystallography.  
+V. Multiple Isomorphous Replacement, Multiple
+Anomalous Dispersion and Non-crystallographic Symmetry}.
+Acta Cryst. A53, 291 - 313.
+
+\bibitem{eden6} Sz\H{o}ke, A., 
+{\em Use of Statistical Information in X-ray Crystallography with
+Application to the Holographic Method}.
+Acta Cryst. A54, 543 - 562.
+
+\bibitem{eden7} Sz\H{o}ke, H., Sz\H{o}ke, A., \&  Somoza, J.R.
+{\em Holographic Methods in X-ray Crystallography.  
+VII. Spatial Target Functions}
+To be published. 
+
+\end{thebibliography}
+\printindex
+
+\end{document}
+

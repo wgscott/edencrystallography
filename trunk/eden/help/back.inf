@@ -1,0 +1,29 @@
+
+********************************************************
+
+Run this program by typing
+
+	eden   back  pname [fc_filename]
+or
+	eden -v back pname [fc_filename]
+
+where pname stands for a parameter file name
+without extension '.inp'
+
+     optional -v (verbose) flag produces a cost 
+     function listing in pname.cost;
+     default (no -v flag) produces no pname.cost.
+
+	>>> NEW EXECUTE LINE OPTION 2/25/02 <<<
+
+     optional fc_filename is the name of the fcalc
+     file to be used as input; it overrides any such
+     name in 'pname.inp'.
+
+
+For more information, type 
+
+	eden -h back 
+
+********************************************************
+

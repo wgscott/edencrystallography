@@ -1,0 +1,40 @@
+
+Addmaps adds comparable entries in two input electron/voxel files weighted by
+your choice of coefficients and places the sum in an output file.  The two sets 
+of electron/voxel files must agree in size and grid type (either simple or 
+body-centered cubic).
+
+NOTE: these are files with extension .bin - 
+      NOT .map (xplor) files!
+
+You must supply a parameter file and 3 other file names (two input file names 
+and an output file name).  None of the file names should have extensions: i.e., 
+omit the .inp extension for the parameter file and omit the .bin extension for 
+the electron/voxel files.  
+
+Thus the basic input should be of form:  
+
+	eden addmaps pname inname1 inname2 outname
+
+In the input parameter file, use variables C1 and C2 to set the coefficients 
+for determining the sum:
+
+	out = C1 * in1 + C2 * in2 
+
+where C1 and C2 may take any value, positive or negative. 
+
+The obligatory input is:
+
+	CELL  	        a b c alpha beta gamma		
+					# unit cell dimensions, in Angstrom, 
+					# followed by angles in degrees 
+	SYMMETRY	name		# symmetry group - e.g. P41
+	RESOLUTION	res   		# resolution in Angstrom
+
+Optional input is:
+
+	C1       	value		# coef. for 1st file; default: 1.0
+	C2       	value		# coef. for 2nd file; default: 1.0
+	RECORD          /a/b/.../name	# full path to record-keeping filename 
+
+
