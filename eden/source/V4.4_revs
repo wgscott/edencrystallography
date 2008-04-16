@@ -1,0 +1,31 @@
+
+*  Changes in file regutil.c to correct the .map output
+   header when a partial regrid is requested.  This has 
+   always been wrong in the past!
+
+*  If the -V option for "very-verbose" is enabled, both 
+   dynamic memory allocation and the freeing of such
+   memory is reported (instead of just the allocation).
+
+*  The allocation of Oar via prepare_cost() in cost.c
+   has been removed; Back did that allocation without 
+   calling the function. Now allocNhklArrays() in 
+   ssetup.c does it for Solve.
+
+*  Corrected error in subrange labelling in Solve logs.
+
+*  Clarified message re. solvent target contents in
+   analyzeTar (qshare.c).
+   Using (double)Ntot in denominator of buckets calc. to 
+   improve alignment of output table. (outliers_summary
+   in solve.c.)
+
+*  (Commented) new check in readEpixFile() (qshare.c) to
+   identify a file that is LONGER than expected. 5/17/04
+
+*  In hklread.c, whenever fobs or fcalc files are read, 
+   we replace call to first3char() (toupper) by 2 calls
+   to strstr.
+
+*  Corrected error report when missing file is encoded
+   in the 'message' array.

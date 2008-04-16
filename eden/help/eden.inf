@@ -1,0 +1,45 @@
+
+***************************************************************
+
+Run Eden by typing:	eden [name] [arg] 
+		
+where [name] stands for one of the following -
+
+the solver:		solve
+
+a preprocessor:		apodfc		apodfo		back		
+			expandfc	expandfo	forth		
+			maketar		sym		tohu		
+
+a postprocessor:	count		regrid		shapes
+			refine
+
+an evaluation utility:	distance	dphase		variance
+
+or another utility:	addmaps		bin2map		cadhkl		
+			map2bin		multmaps	perturbhkl 	
+			ranphase
+
+
+[arg] stands for the appropriate argument list for [name]. 
+
+Get brief information about [name] by typing:	eden [name]
+or more extensive information by typing:	eden -h [name] 
+
+
+Three other kinds of help are available, with or w/o "-h":
+
+For a list of all keywords in input parameter files, type:   
+
+	eden [-h] keywords
+
+For information on the available switches in Eden, type
+
+	eden [-h] switches
+
+and for news on recent changes to Eden, type
+
+	eden [-h] news
+
+***************************************************************
+

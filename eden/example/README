@@ -1,0 +1,72 @@
+
+		Crambin: A Realistic Test Case		
+
+Here is a somewhat realistic test case for exercising EDEN.  The molecule is 
+Crambin which was grown as a P21 crystal with cell parameters a = 40.802, 
+b = 18.519, c = 22.379 A, angles alpha=90, beta=90.57 and gamma=90 degrees.
+
+Data and pdb files were graciously provided by Drs. Hakon Hope of UC Davis and 
+Sean Parkin of Duke University; Dr. Bernhard Rupp of Lawrence Livermore National
+Laboratory allowed us to use his pdb program to create a starting model from 
+a truncated version of the pdb file (see below).
+
+Now for some details:
+
+1. In originals/, there are 3 (compressed) files: cramb2m.fo.gz contains the
+data collected at 0.93A and merged; fullcramb.pdb.gz contains the full set 
+of pdb coordinates of the solved structure; and start.fc.gz contains a
+starting model. This was generated from the full pdb file by removing the 
+ethanol, the waters, and also the last 10 out of 46 residues (but leaving the 
+sulphur in residue #40).  This starting phase set constituted about 1/2 of all 
+the electrons in the unit cell.  
+
+Start by running gunzip on all 3 files.
+
+2.  In apodize/, I have given the complete trail of work done to convert
+the original .fo and .fc into appropriate fobs and fcalc files.   The steps for
+the data file are:	
+
+The starting model is in X-PLOR format and contains the correct F(000).  
+Type "fcalc_script" to expand and apodize the model:
+
+	a) run the model, expanded to P1, through Apodfc; 
+	this ensure the correct smearing.  
+	Apodfc writes a file, k2.fcalc_wil, to be used for scaling the fobs.
+
+Next, type "fobs_script"; it will:
+
+	a) convert the data to X-PLOR format (using an AWK script, "awkit"); 
+	b) insert an F(000) value; 
+	d) run data through Apodfo, to ensure the correct smearing; 
+	in fact, the data are not smeared. Apodfo does not write a file 
+	*_apo.hkl or a "new" ASCII file for plotting.
+For the next step YOU MUST PARTICIPATE!
+	e) and (within Apodfo) scale the fobs to the fcalc, 
+	using your input of k2.fcalc_wil.  
+
+Type  "fobs_script" to do all these steps.
+
+At this point we have a starting data set, cramb.fobs, a starting model, 
+start.fcalc and a value for FSCALE which is ~0.8.  
+
+
+3. In back/ type
+
+	eden back par
+
+The starting model is run through Back and the output -- par_back.bin is
+a binary file of electron density in real space, ready for a Solve run.  
+On an SGI Indy Irix, the run took about 2 minutes.
+
+
+4.  In solve/ type
+
+	eden -v solve floor
+
+On our SGI, the run took about 16 minutes to complete.
+A run of Forth on the binary result of Solve will give a reciprocal space
+solution.  A run of Regrid will transform the Solve binary result to 
+standard Xplor map format.  These are available for comparison to other 
+Crambin solutions.
+
+

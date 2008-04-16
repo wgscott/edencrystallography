@@ -1,0 +1,30 @@
+
+Multmaps multiplies comparable entries in two input electron/voxel files 
+and places the product in an output file.  The two sets of electron/voxel 
+files must agree in size and grid type (either simple or body-centered cubic).
+
+You must supply a parameter file and 3 other file names (two input file names 
+and an output file name).  None of the file names should have extensions: i.e., 
+omit the .inp extension for the parameter file and omit the .bin extension for 
+the electron/voxel files.  
+
+NOTE: these are files with extension .bin - 
+      NOT .map (xplor) files!
+
+Thus the basic input should be of form:  
+
+	eden multmaps pname inname1 inname2 outname
+
+The obligatory input is:
+
+	CELL  	        a b c alpha beta gamma		
+					# unit cell dimensions, in Angstrom, 
+					# followed by angles in degrees 
+	SYMMETRY	name		# symmetry group - e.g. P41
+	RESOLUTION	res   		# resolution in Angstrom
+
+Optional input is:
+
+	RECORD          /a/b/.../name	# full path to record-keeping filename 
+
+

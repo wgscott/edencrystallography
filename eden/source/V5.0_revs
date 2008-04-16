@@ -1,0 +1,6 @@
+						June - July 2004
+
+* Both double and float versions are available via a switch in the Makefile.
+  The Makefile itself has been largely overhauled.
+  Thanks to David van der Spoel for much help.
+

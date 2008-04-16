@@ -1,0 +1,28 @@
+
+********************************************************
+
+Run this program by typing                              
+
+	eden expandfo pname name.ext
+
+where pname stands for an input file without .inp 
+extension and name.ext stands for the input fobs 
+structure factor file name typed in full,
+
+or by typing
+
+	eden expandfo pname
+
+in which case, you will be prompted to enter remaining
+arguments.
+
+Output will be written to name_P1.ext or - for 
+anomalous data - to name_Pplus.ext and (for 
+triclinic crystals) to name_Pminus.ext.
+
+For more information, type 
+
+	eden -h expandfo 
+
+********************************************************
+

@@ -1,0 +1,56 @@
+
+Count inputs a solution from Solve or Back (# electrons/voxel) plus a pdb file 
+whose name is in the input parameter file.  
+
+NOTE: 	THE PDB FILE IS EXPECTED TO COVER A SINGLE MOLECULE.  
+	DO NOT EXPAND IT TO P1 BEFORE RUNNING COUNT!
+
+Count counts electrons around each of the atoms in the pdb file.  
+Run it by typing:
+		
+	eden  count  pname  sname  [N]
+
+where pname stands for a parameter file name
+			without extension '.inp',
+      sname stands for the base name of the binary
+			file to be counted,
+  and N stands for the regrid factor (2 by default)
+  
+Count expects to find a parameter file (pname.inp) and a file sname.bin.  If a 
+body-centered grid was used for preparing sname, N should be an even integer.
+
+Count writes an ASCII file, sname_[N].count, containing most of the pdb file
+information plus the electron count around each atom, extended out to 2 radii,
+by default.
+
+Count uses an input file containing run conditions and parameters, entered as 
+upper- or lower-case keywords followed by values.
+
+The obligatory input is:
+
+	CELL  	        a b c alpha beta gamma		
+					# unit cell dimensions, in Angstrom, 
+					# followed by angles in degrees 
+	RESOLUTION	res   		# resolution in Angstrom
+	SYMMETRY	name		# symmetry group - e.g. P41
+	PDB_FILENAME	name		# file containing atom information
+	BCORR		value		# B- value correction; use 0 if original
+					# fobs file was not apodized; otherwise,
+					# use B-value reported in apodfo.log.
+
+If there is no such report (old file), use Bcorr = 4*PISQ*delta*eta*(dr)^2.
+
+Optional input is:
+
+	X_LIMITS         X1 X2 		# fractional limits in x (defaults: 0,1)
+	Y_LIMITS         Y1 Y2 		# fractional limits in y (defaults: 0,1)
+	Z_LIMITS         Z1 Z2 		# fractional limits in z (defaults: 0,1)
+	GRID_TYPE       string		# 'simple' or 'body-centered'
+	LEVELS		l1 l2 l3	# fractions of input_res defining radii
+					# for counting.
+					# defaults: 1.0, 1.5 2.0
+	RECORD          /a/b/.../name	# full path to record-keeping filename 
+
+Any line containing anything else as its first symbol will be ignored.
+Input may be ordered arbitrarily.  Numbers are in free format.
+

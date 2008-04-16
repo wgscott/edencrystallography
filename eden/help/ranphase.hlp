@@ -1,0 +1,33 @@
+
+Using as input an fobs file (Fob) and (optionally) a model fcalc file (R), 
+Ranphase generates complex vectors (Oran) with random phases, such that the 
+vector composition 
+
+	FRan = R + Oran 
+
+satisfies |FRan| ~ Fob.  The ~ sign indicates that sigmas are used to select a 
+point on each Gaussian centered at Fob, with the aid of a normally distributed 
+deviste.  (If there are no sigmas in the input fobs file, |FRan| = Fob.)  
+Random phases are selected with the appropriate algorithms for centric and 
+acentric reflections.  The output of Ranphase is an fcalc file containing FRan.
+	
+You must supply a parameter file (no extension), the name of the fobs file, 
+a random seed in range (1, 99), and optionally a model fcalc file.  The output 
+will be written to ran[ss].fcalc, where ss stands for the 2-digit 
+representation of the input seed.
+
+Note that the fobs and fcalc files should be scaled and apodized to the same 
+resolution.  Note too that the output file contains only the unique reflections.
+
+Ranphase expects the input parameter file to contain parameters entered as 
+upper- or lower-case keywords followed by values.  The basic input set is:
+
+	RESOLUTION	res   		# resolution in Angstrom
+	SYMMETRY 	name		# symmetry group 
+	CELL		a b c alpha beta gamma	
+					# unit cell dimensions in Angstrom 
+					# and angles in degrees 
+and optionally,
+
+	RECORD          /a/b/.../name	# full path to record-keeping filename 
+

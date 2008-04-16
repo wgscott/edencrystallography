@@ -1,0 +1,37 @@
+
+Dphase calculates the phase differences between comparable (hkl) structure 
+factors in two model files.  The phase differences, weighted by the 
+amplitudes, are calculated twice - once based on the first model file and 
+once based on the 2nd.  They are then summed and reported over shells in 
+(hkl) space.
+
+Dphase excludes terms for which the amplitude in either file is 0 and it 
+excludes the (000) term.
+   
+Dphase also calculates R factors, regarding first one and then the other 
+file as the "data".
+
+Run Dphase by typing:
+
+	eden  dphase  pname  sfname1  sfname2
+
+where pname stands for a parameter file without extension .inp.  Input will 
+be taken from two model files of structure factors, sfname1 and sfname2 
+(with extensions written out fully).
+
+Dphase expects the input file, pname.inp, to contain parameters entered as 
+upper- or lower-case keywords followed by values.  The basic input set is:
+
+	RESOLUTION	res   		# resolution in Angstrom
+	SYMMETRY 	name		# symmetry group 
+	CELL		a b c alpha beta gamma	
+					# unit cell dimensions in Angstrom 
+					# and angles in degrees 
+and optionally,
+
+	RECORD          /a/b/.../name	# full path to record-keeping filename 
+
+Any line containing anything else as its first symbol will be ignored.
+Input may be ordered arbitrarily.  Numbers are in free format.
+
+

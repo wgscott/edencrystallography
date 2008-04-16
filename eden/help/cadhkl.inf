@@ -1,0 +1,45 @@
+
+********************************************************
+
+Run this program by typing one of the 3 possible forms: 
+
+1	eden cadhkl pname in1.fc in2.fc out.fc
+2	eden cadhkl pname in1.fc in2.fo out.fc
+3	eden cadhkl pname in1.fo in2.fo out.fo
+
+or by typing
+
+	eden cadhkl pname
+
+in which case, you will be prompted to enter remaining
+arguments.
+
+Here, pname      stands for an input parameter file name
+	         without extension '.inp'
+      in1.fc(o)  stands for a 1st input fcalc (fobs) 
+		 file name;
+      in2.fc(o)  stands for a 2nd input fcalc (fobs)
+		 file name;
+      out.fc(o)  stands for an output fcalc (fobs)
+		 file name.
+
+What is done depends on the input variable MODE:
+
+      with no MODE or value 'add', contents of in1.fc 
+	      and in2.fc are added, using optional 
+	      coefficients (form 1).
+      with value 'copy' contents of in1.fc are transfered
+	      to out.fc, but phases are replaced by those 
+	      in in2.fc where available (form 1).
+      with value 'merge', phases from in1.fc are merged 
+	      with amplitudes from in2.fo (form 2). 
+      with value 'eliminate', (hkl) entries in in1.fo 
+	      are written to out.fo iff they are NOT 
+	      present in in2.fo (form 3).
+
+For more information, type 
+
+	eden -h cadhkl 
+
+********************************************************
+

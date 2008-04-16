@@ -1,0 +1,31 @@
+
+*************************************************
+
+Run this program by typing
+
+	eden  shapes  pname  sname  [N]
+
+where pname stands for a parameter file name
+			without extension '.inp',
+      sname stands for the base name of the binary
+			file to be studied,
+  and N stands for the regrid factor (2 by default)
+  (Use an even N for body-centered grid.)
+
+or by typing
+
+	eden shapes pname
+
+in which case, you will be prompted to enter remaining
+arguments.
+
+Input data will be taken from sname.bin.  Output 
+will be written to sname_[N].map and shapee.map 
+(XPLOR files).
+
+For more information, type
+
+	eden -h shapes
+
+*************************************************
+

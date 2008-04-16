@@ -1,0 +1,37 @@
+
+		INFORMATION FOR EDEN V 5.0 USERS	June 22, 2004
+
+
+On line 88 of the Makefile, you will find the following statement:
+
+DOUBLESWITCH 	= ON
+
+This actuates a switch to ensure that Eden will work always in double
+precision (as it has in the past).  If, however, you would like to save 
+a lot of memory  - and some time as well - you should REPLACE that line
+by:
+
+DOUBLESWITCH 	= OFF
+
+If you then type 
+
+make clean
+make
+
+the executable, eden, will work in single precision.
+
+Whenever you change the value of DOUBLESWITCH, you must 'make clean' and
+then 'make' to get eden to behave as you want it to.  Note that when you 
+type 'make' to prepare eden, the executable will not be moved to some 
+other directory.  For the complete process, you should type 'make install'.
+
+There are now clear instructions regarding where to find items; both
+the directory where the FFTW 'include' and 'lib' are, as well as the 
+directory where you want to install the executable.  Please read the 
+Makefile carefully before typing 'make'.  You do NOT have to be an
+expert programmer to fill in the information that works for your system.
+
+In the past, you were told to set a global variable EDENHOME.  You
+no longer need to do this; the variable will be set for you as part of
+the 'make' procedure.
+

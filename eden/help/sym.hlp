@@ -1,0 +1,42 @@
+
+Sym is a little utility for reporting points of crystalline symmetry in the 
+unit cell.
+
+Run it by typing 
+
+	eden  [-i]  sym pname pdbname
+
+where pname is the input file name typed without its .inp extension. and  
+pdbname is the input pdb file name without its .pdb extension.
+
+      -i is an optional flag for interactive session; you aill enter
+	 atomic coordinates from the terminal and pdbname is ignored.
+	 Default: non-interactive, input from pdbfile.
+
+Sym expects to find an input file containing parameter names, entered as upper- 
+or lower-case keywords, followed by values.
+
+The basic input set (not all of which is used) is:
+
+	RESOLUTION	res   		# resolution in Angstrom
+	SYMMETRY 	name		# symmetry group 
+	CELL		a b c alpha beta gamma	
+					# unit cell dimensions in Angstrom 
+					# and angles in degrees 
+
+Optional input is:
+
+	OVERLAP		value		# check for cs overlap using value,
+	 				# the distance in A over which overlap 
+					# is to be checked.
+	RECORD          /a/b/.../name	# full path to record-keeping filename 
+
+Any line containing anything else as its first symbol will be ignored.
+Input may be ordered arbitrarily.  Numbers are in free format.
+
+PLEASE NOTE: Sometimes, a pdb file is formatted in such a way that its fields
+coalesce (lack intervening white space).  In such cases, the EDEN function
+that reads the file produces garbage.  There is an AWK script named awk_pdb 
+(in $EDENHOME/tools) which may be helpful for reformatting such a pdb file,
+prior to running Sym.
+

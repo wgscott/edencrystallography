@@ -1,0 +1,26 @@
+
+********************************************************
+
+Run this program by typing
+
+	eden  forth  pname  fname
+
+where pname stands for a parameter file name without 
+extension '.inp' and fname stands for binary file name: 
+electron/voxel data will be taken from fname.bin
+
+or by typing
+
+	eden forth pname
+
+in which case, you will be prompted to enter remaining
+argument.
+
+Output will be written to fname_forth.hkl
+
+For more information, type 
+
+	eden -h forth 
+
+********************************************************
+

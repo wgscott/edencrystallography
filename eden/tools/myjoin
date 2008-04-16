@@ -1,0 +1,14 @@
+#
+#	AWK script to join pairs of lines
+#
+#	First it puts in an extra line between each pair;
+#	then by changing RS and FS it does the join.
+#
+#	Run it by typing:
+#		myjoin [infile] [outfile]
+#
+#	where [infile] and [outfile] stand for input & output file names.
+#
+awk '{print; if (NR%2 == 0) printf("\n")}' <$1 | \
+awk 'BEGIN{RS="";FS="\n"}{print $1,$2}' >$2
+

@@ -1,0 +1,30 @@
+
+********************************************************
+
+Run this program by typing                              
+
+	eden  [-i]  sym pname pdbname
+
+where pname stands for an input parameter file name 
+      without extension '.inp' and
+      pdbname stands for the input pdb file name
+      without extension '.pdb'.
+
+or by typing
+
+	eden [-i] sym pname
+
+in which case, you will be prompted to enter remaining
+argument.
+
+      -i is an optional flag for interactive session; 
+	 you aill enter atomic coordinates from the 
+	 terminal and pdbname is ignored.
+	 Default: non-interactive, input from pdbfile.
+
+For more information, type 
+
+	eden -h sym 
+
+********************************************************
+

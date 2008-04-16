@@ -1,0 +1,81 @@
+
+Apodfc is a preprocessor for Eden, to be used for apodizing (smearing) an fcalc 
+file.  It also provides help for determining fscale, the absolute scaling of 
+fobs to fcalc files.
+
+Apodfc reads (hkl) structure factors from an input fcalc file; it generates a 
+set of data points that are mean values of ln(|I|^2) over equal intervals, in 
+a space whose units are:  
+
+  1/rsq = 1/(r*r) = (h/a)*(h/a) + (k/b)*(k/b) + (l/c)*(l/c)
+
+(or their generalized form for triclinic crystals).  
+
+The program finds the slope of that set of data points, using appropriate 
+resolution limits (see below); it then calculates and writes out a set of 
+apodized structure factors, spreading the data by an exponential factor delta 
+derived from the slope, insofar as delta > 0.  
+
+Apodfc prints the average crystallographic B factor before and after 
+apodization.  It also writes out one further little file (whose name is 
+derived from the input fcalc file by adding "_wil") showing the apodized 
+version of your data (ln(Isq) vs. 1/rsq), for inspection under xmgrace or other 
+plotting program.
+
+If you want to see how Apodfc does its apodization, you should run it with the 
+-g flag for graphics.  Then, from within Apodfc, four plots are normally 
+displayed (under xmgrace) and you will be able to choose which pair to use for 
+determining the smearing factor.  The first two plots (labelled "wil" and 
+"lin_wil" show, respectively, the original ln(Isq) as a function of 1/rsq and 
+a best-fit linearized version of the same.  The second pair of plots (labelled 
+"wil_w0corr" and "lin_wil_w0corr") show the same after application of a 
+"universal" correction, specific to proteins.  Generally, we recommend using 
+the corrected files.  The output (to terminal and log) will help you make that 
+decision by reporting the standard deviation of linearized to unlinearized 
+plots, for both original and corrected versions.  If you do not request
+graphics, Apodfc makes the decision for you, based on the lower standard 
+deviation.
+
+Run the program by typing:
+	
+	eden [-vg] apodfc pname sfname
+
+where pname.inp is the input parameter file name and sfname is the fcalc 
+structure factor file name (including extension).
+
+optional -v means send verbose listings of ln(Isq) to the log.
+optional -g means enable graphics plot.
+
+Apodfc expects to find an input file, pname.inp, containing run conditions and 
+parameters, entered as upper- or lower-case keywords (first column) followed 
+by values (second column), with optional comments (ignored by the code) 
+following the # sign.
+
+The obligatory input is:
+
+	SYMMETRY	name		# symmetry group - e.g. P41
+	CELL		a b c alpha beta gamma
+					# unit cell dimensions in Angstrom 
+					# and angles in degrees 
+	RESOLUTION	res   		# resolution in Angstrom
+
+The optional input is:
+
+	BINWIDTH	num		# width of each bin into which 
+					# intensities are to be gathered 
+					# (default: 0.002)
+	APOD_RES	val 		# resolution for calculating delta;
+					# (default: input_res). 
+	MAX_RES		maxval 		# maximum resolution (default: 
+					# 0.05 Angstrom)
+	MIN_RES		minval		# minimum resolution (default: 
+					# 3.5 Angstrom)
+	RECORD          /a/b/.../name	# path to record-keeping filename 
+
+The linear fit is calculated over a subset of the 1/rsq space, corresponding to 
+(max_res, min_res).  The apodized structure factors are written to a file whose 
+name is name_apo.ext, where name.ext stands for sfname.
+
+Output files are written to the directory in which Apodfc is run, regardless of 
+the directory in which sfname is located.
+

@@ -1,0 +1,37 @@
+
+	**********************************************************
+	WARNING: Tohu is a poor substitute for other programs that
+	manipulate PDB information.  Use it only in emergencies!
+	**********************************************************
+
+Tohu converts .pdb input into a file of calculated structure factors.
+
+Run Tohu by typing 
+
+	eden  tohu  pname  pdbname
+
+where 	pname stands for an input parameter file name without .inp.  
+	and  pdbname for the input pdb file name without .pdb 
+
+Tohu reads the following from pname.inp:
+
+	RESOLUTION	res   		# resolution in Angstrom
+	SYMMETRY 	name		# symmetry group 
+	CELL		a b c alpha beta gamma
+					# unit cell dimensions in 
+					# Angstrom and angles in degrees 
+
+There is no optional input, other than possibly a non-default grid type
+and reord filename:
+
+	GRID_TYPE  	string 		# 'simple' or 'body-centered'
+	RECORD          /a/b/.../name	# full path to record-keeping filename 
+
+The structure factors are written to a file named [pdbname].fcalc.
+
+PLEASE NOTE: Sometimes, a pdb file is formatted in such a way that its fields
+coalesce (lack intervening white space).  In such cases, the EDEN function
+that reads the file produces garbage.  There is an AWK script named awk_pdb 
+(in $EDENHOME/tools) which may be helpful for reformatting such a pdb file,
+prior to running Tohu.
+

@@ -1,0 +1,30 @@
+#!/bin/sh
+# the next line restarts using wish \
+exec wish "$0" "$@"
+
+# Script for displaying help information in a window.
+# This script is invoked by user typing eden -h [program_name]
+# The C code that ensues is:
+#     sprintf(message, "$EDENHOME/help/lookat $EDENHOME/help/%s.hlp %s &",
+#             program_name, program_name) ;
+#     if (system(message) != 0)
+#	      (etc.)
+
+
+text .text -relief raised -bd 2 -yscrollcommand ".scroll set"\
+-background white \
+-font *-courier-medium-r-normal--*-140-*-*-*-*-*-*
+
+wm title . "[lindex $argv 1]"
+scrollbar .scroll -command ".text yview"
+pack .scroll -side right -fill y
+pack .text -side left 
+pack .text -expand 1 -fill both
+
+.text configure -setgrid 1
+ 
+set f [open [lindex $argv 0] r]
+while {![eof $f]} {
+  .text insert end [read $f 1000] 
+}
+close $f

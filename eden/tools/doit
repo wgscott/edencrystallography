@@ -1,0 +1,18 @@
+#!/bin/csh -f
+#PBS -l arch=pentium-linux		
+setenv EDENHOME	/home/hanna/EDEN		
+
+## The previous 2 lines define
+## the system under which EDEN runs and your definition of EDENHOME
+
+##	This is a script to test the stability of an Eden Solve run 
+##	by repeatedly perturbing and resolving the result.
+
+stab_script .30 20 
+stab_script .30 21 
+stab_script .30 22 
+stab_script .30 23 
+stab_script .30 24 
+
+##	At this point, you may run "eden variance ..." on the outputs of these
+##	5 (or whatever) runs, to measure the stability of the original result.

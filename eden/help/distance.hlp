@@ -1,0 +1,34 @@
+
+Distance reads M (in range 2 - 8) sets of files containing electron/voxels.  
+For each pair of files, it calculates and reports the root mean square 
+fractional distance:
+
+		SQRT[S(delta_rho)^2] / (SQRT[S(rho1)^2] + SQRT[S(rho2)^2])
+		
+where delta_rho is the difference between comparable (xyz) elements in two 
+files, rho1 and rho2, and S represents summation over all elements.  
+
+Distance also reports, for each pair of files, a linear absolute fractional 
+distance and a correlation coefficient - both of whose definitions are also 
+recorded in the output.  The information is reported to your terminal and to 
+the log.  Run Distance by typing:
+
+	eden  distance  pname  sname1 sname2 sname3 ...
+
+where pname stands for a parameter file without extension .inp and up to 8 
+names of electron/voxel files may be entered, without or  w/o .bin extension.
+
+The obligatory input in pname.inp is the standard set of information:
+
+	RESOLUTION	res   		# resolution in Angstrom
+	SYMMETRY 	name		# symmetry group 
+	CELL		a b c alpha beta gamma	
+					# unit cell dimensions in Angstrom 
+					# and angles in degrees 
+
+
+There is no optional input, other than possibly a non-default grid type or
+non-default record filename:
+
+	GRID_TYPE  	string 		# 'simple' or 'body-centered'
+	RECORD          /a/b/.../name	# full path to record-keeping filename 

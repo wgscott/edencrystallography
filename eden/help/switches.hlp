@@ -1,0 +1,18 @@
+
+There are a number of optional switches that may be used 
+with Eden.  They should be entered immediately after the
+word 'eden', i.e., before the name of the Eden program 
+that you want to run.
+
+-b (batch)	Single log file (no stacking of names)
+-g (graphics)	Enables graphs under xmgrace in Apodf[co].
+-h (help)	Give help re. named program, then quit.
+-i (interact.)	Input from the terminal in Sym.
+-q (quick)	by-pass the slow part of the code (Tohu)
+-s (silent)	Error messages only, to your terminal; 
+		no effect on log.  Good for batch work.
+-v (verbose)	Produces cost function listings in Back 
+		and Solve; always produces more output,
+		both to terminal and to log.  Highly
+		recommended!
+

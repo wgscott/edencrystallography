@@ -1,0 +1,70 @@
+			2004
+
+*  apodutil.c, apply_w0corr() - get out of loop if n>=Nbin-m0,
+   NOT n>Nbin-m0.  Otherwise, code can loop forever, fl.pt.crash.
+   1/14/04
+
+*  Changed read_1_fobs() in hklread.c to check for new format of
+   form: INDEX int int int FOBS float float SIGMA float
+   The 2nd float after FOBS is not used. 4/2/04
+
+*  Removed (redundant) solve.cost_for_plot. 4/14/04 
+
+*  In-line formatting of pdb files according to CCP4 specs. 
+   6/15/04
+
+*  Double and float versions of Eden available via switch in 
+   Makefile. 6/15/04
+
+*  Eden is maintained under Gromacs (CVS). 6/15/04
+
+*  View (LLNL local) format withdrawn, 6/15/04
+
+*  A new package, Refine, is available for reconciling
+   differences between a final model and the original pdb file.
+   9/1/04
+
+			2003
+
+*  Utilities map2bin and bin2map enable X-PLOR maps to be inter-
+   converted with .bin files, without regridding. 6/6/03.
+
+*  The Eden-specific fftw.h is replaced by the /usr/local/include
+   version (for FFTW2.1.5); fft "wisdom" is saved for bit-for-bit
+   agreement between comparable runs.  9/18/03.
+
+*  Replaced xmgr by xmgrace.  10/14/03.
+
+*  Otherwise - mainly minor changes.
+
+			2002
+
+*  A new switch, -b, removes the stacking of log file names, for 
+   batch work.  I.e., there is a single 'solve.log', for example;
+   successive 'solve' runs REPLACE this log, instead of writing
+   new files: solve1.log, solve2.log, etc.  9/4/02.
+
+*  A new cost file is written: [name].cost_for_plot contains 
+   information convenient for plotting cost terms. 8/30/02.
+
+*  An error in calculating the protein correction for Wilson plots 
+   has been corrected. 8/27/02.
+
+*  Interrupt Handling in Solve, 3/25/02
+
+	You can quit Solve in an orderly fashion, while it is running 
+	the complex conjugate solver, by typing ctrl-c.
+
+
+*  Variance now handles the Highres Option.  3/21/02.
+
+
+*  New Execute Line Option in Back, 2/25/02 
+
+	fc_filename, the name of the hkl (fcalc) file, may be placed 
+	on the execute line:
+
+		eden [-v] back [input_filename] [fc_filename]
+
+	It then overrides any value for FC_FILENAME in the input file.
+

@@ -1,0 +1,31 @@
+
+********************************************************
+
+Run this program by typing                              
+
+	eden multmaps pname inname1 inname2 outname
+
+where pname stands for an input parameter file name,
+without extension '.inp'
+      inname1, inname2 stand for input file names
+  and outname stands for an output file name, all three
+  being electron/voxel files.
+
+NOTE: these are files with extension .bin - 
+      NOT .map (xplor) files!
+
+or by typing
+
+	eden addmaps pname
+
+in which case, you will be prompted to enter remaining
+arguments.
+
+The program multiplies the 2 input files, term by term,
+
+For more information, type 
+
+	eden -h multmaps 
+
+********************************************************
+

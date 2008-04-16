@@ -1,0 +1,38 @@
+
+Expandfo  does an expansion of an fobs structure factor file from any symmetry 
+to P1.
+   
+Run Expandfo by typing:
+
+	eden  expandfo  pname  foname.ext
+
+where pname stands for a parameter file without extension .inp.  Input will be 
+taken from a data file of structure factors, foname.ext and output will be 
+written to another data file of structure factors, foname_P1.ext.  If the data 
+is an anomalous dispersion file (see below) output is written to 
+foname_Pplus.ext and (for triclinic crystals) to foname_Pminus.ext.
+
+Expandfo expects the input file, pname.inp, to contain parameters entered as 
+upper- or lower-case keywords followed by values.
+
+The basic input set (not all of which is used) is:
+
+	RESOLUTION	res   		# resolution in Angstrom
+	SYMMETRY 	name		# symmetry group 
+	CELL		a b c alpha beta gamma	
+					# unit cell dimensions in Angstrom 
+					# and angles in degrees 
+
+Optional input is:
+
+	ANOM		TRUE		# TRUE for anomalous data, 
+					# default: FALSE
+	USESIG		FALSE		# fobs SIGMAs will not be read, 
+					# expanded and written to output. 
+					# default: TRUE.
+	RECORD          /a/b/.../name	# full path to record-keeping filename 
+	
+Any line containing anything else as its first symbol will be ignored.
+Input may be ordered arbitrarily.  Numbers are in free format.
+
+

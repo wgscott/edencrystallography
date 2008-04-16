@@ -1,0 +1,9 @@
+							August, 2004
+
+* A real-space refinement package, written by Filipe Maia, is now in
+  Eden.
+							Oct 8, 2004
+
+* Tohu changed to use 5 gaussian approach, rather than point atoms, to
+  calculate structure factors.  Written by Filipe Maia.
+

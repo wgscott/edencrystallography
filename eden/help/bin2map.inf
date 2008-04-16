@@ -1,0 +1,25 @@
+
+******************************************************
+
+Run this program by typing
+
+	eden  bin2map  pname  name
+
+where pname stands for parameter file name
+			without extension '.inp',
+and input will be taken from binary file name.bin 
+An Xplor-style .map file will be written.
+
+or by typing
+
+	eden bin2map pname
+
+in which case, you will be prompted to enter remaining
+argument.
+
+For more information, type 
+
+	eden -h bin2map 
+
+******************************************************
+

@@ -1,0 +1,30 @@
+
+********************************************************
+
+Run this program by typing                              
+
+	eden ranphase pname foname seed [fcname] 
+
+where pname stands for an input file without .inp 
+extension, foname is the name of an experimental 
+(fobs) file, seed stands for a positive integer 
+in range (1, 99), and the optional fcname is the 
+name of a model fcalc structure factor file.  Files 
+foname and fcname should be typed in full,
+
+or by typing
+
+	eden ranphase pname
+
+in which case, you will be prompted to enter remaining
+arguments.
+
+Output will be written to ran[ss].fcalc, where ss is 
+a 2-digit representation of the seed.
+
+For more information, type 
+
+	eden -h ranphase 
+
+********************************************************
+

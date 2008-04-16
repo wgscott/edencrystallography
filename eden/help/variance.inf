@@ -1,0 +1,34 @@
+
+******************************************************
+
+Run this program by typing
+
+	eden  variance  pname  pert name1  name2 ... 
+
+where pname stands for an input parameter file name
+			without extension '.inp',
+  and pert is a fractional measure of the variability 
+                   of the sources of the maps.
+and input will be taken from name1.bin, name2.bin, 
+etc. (at least 2 and at most 50)
+
+or by typing
+
+	eden variance pname
+
+in which case, you will be prompted to enter remaining
+arguments (up to 8 file names).
+
+Measures of variance that are computed for the input
+files are: the average, the standard error, the 
+error-weighted average and the "unreliability".  
+They are written to files named average.bin, 
+sterror.bin, erwm.bin and unreliability.bin,
+respectively.
+
+For more information, type 
+
+	eden -h variance 
+
+******************************************************
+
